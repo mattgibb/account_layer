@@ -126,25 +126,6 @@ ALTER SEQUENCE customer_accounts_id_seq OWNED BY customer_accounts.id;
 
 
 --
--- Name: customer_accounts_user_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE customer_accounts_user_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: customer_accounts_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE customer_accounts_user_id_seq OWNED BY customer_accounts.user_id;
-
-
---
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -279,13 +260,6 @@ ALTER TABLE ONLY control_accounts ALTER COLUMN id SET DEFAULT nextval('control_a
 --
 
 ALTER TABLE ONLY customer_accounts ALTER COLUMN id SET DEFAULT nextval('customer_accounts_id_seq'::regclass);
-
-
---
--- Name: user_id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY customer_accounts ALTER COLUMN user_id SET DEFAULT nextval('customer_accounts_user_id_seq'::regclass);
 
 
 --

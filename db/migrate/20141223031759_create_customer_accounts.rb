@@ -3,7 +3,7 @@ class CreateCustomerAccounts < ActiveRecord::Migration
     execute %{
       CREATE TABLE customer_accounts (
         id bigserial PRIMARY KEY,
-        user_id bigserial UNIQUE NOT NULL,
+        user_id bigint UNIQUE NOT NULL,
         type text NOT NULL,
         balance non_negative_currency,
         created_at timestamp with time zone NOT NULL,
