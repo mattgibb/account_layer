@@ -93,6 +93,58 @@ ALTER SEQUENCE control_accounts_id_seq OWNED BY control_accounts.id;
 
 
 --
+-- Name: customer_accounts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE customer_accounts (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    type text NOT NULL,
+    balance non_negative_currency,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: customer_accounts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE customer_accounts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: customer_accounts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE customer_accounts_id_seq OWNED BY customer_accounts.id;
+
+
+--
+-- Name: customer_accounts_user_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE customer_accounts_user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: customer_accounts_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE customer_accounts_user_id_seq OWNED BY customer_accounts.user_id;
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -109,11 +161,41 @@ ALTER TABLE ONLY control_accounts ALTER COLUMN id SET DEFAULT nextval('control_a
 
 
 --
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY customer_accounts ALTER COLUMN id SET DEFAULT nextval('customer_accounts_id_seq'::regclass);
+
+
+--
+-- Name: user_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY customer_accounts ALTER COLUMN user_id SET DEFAULT nextval('customer_accounts_user_id_seq'::regclass);
+
+
+--
 -- Name: control_accounts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY control_accounts
     ADD CONSTRAINT control_accounts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: customer_accounts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY customer_accounts
+    ADD CONSTRAINT customer_accounts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: customer_accounts_user_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY customer_accounts
+    ADD CONSTRAINT customer_accounts_user_id_key UNIQUE (user_id);
 
 
 --
@@ -130,4 +212,6 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 SET search_path TO "$user",public;
 
 INSERT INTO schema_migrations (version) VALUES ('20141223021457');
+
+INSERT INTO schema_migrations (version) VALUES ('20141223031759');
 
