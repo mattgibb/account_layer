@@ -154,6 +154,120 @@ CREATE TABLE schema_migrations (
 
 
 --
+-- Name: transactions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE transactions (
+    id bigint NOT NULL,
+    customer_debit_id bigint NOT NULL,
+    customer_credit_id bigint NOT NULL,
+    control_debit_id bigint NOT NULL,
+    control_credit_id bigint NOT NULL,
+    amount positive_currency,
+    comment text,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT single_credit_id CHECK (((NOT ((customer_credit_id IS NULL) AND (control_credit_id IS NULL))) AND (NOT ((customer_credit_id IS NOT NULL) AND (control_credit_id IS NOT NULL))))),
+    CONSTRAINT single_debit_id CHECK (((NOT ((customer_debit_id IS NULL) AND (control_debit_id IS NULL))) AND (NOT ((customer_debit_id IS NOT NULL) AND (control_debit_id IS NOT NULL)))))
+);
+
+
+--
+-- Name: transactions_control_credit_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE transactions_control_credit_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: transactions_control_credit_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE transactions_control_credit_id_seq OWNED BY transactions.control_credit_id;
+
+
+--
+-- Name: transactions_control_debit_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE transactions_control_debit_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: transactions_control_debit_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE transactions_control_debit_id_seq OWNED BY transactions.control_debit_id;
+
+
+--
+-- Name: transactions_customer_credit_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE transactions_customer_credit_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: transactions_customer_credit_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE transactions_customer_credit_id_seq OWNED BY transactions.customer_credit_id;
+
+
+--
+-- Name: transactions_customer_debit_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE transactions_customer_debit_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: transactions_customer_debit_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE transactions_customer_debit_id_seq OWNED BY transactions.customer_debit_id;
+
+
+--
+-- Name: transactions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE transactions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: transactions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE transactions_id_seq OWNED BY transactions.id;
+
+
+--
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -172,6 +286,41 @@ ALTER TABLE ONLY customer_accounts ALTER COLUMN id SET DEFAULT nextval('customer
 --
 
 ALTER TABLE ONLY customer_accounts ALTER COLUMN user_id SET DEFAULT nextval('customer_accounts_user_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY transactions ALTER COLUMN id SET DEFAULT nextval('transactions_id_seq'::regclass);
+
+
+--
+-- Name: customer_debit_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY transactions ALTER COLUMN customer_debit_id SET DEFAULT nextval('transactions_customer_debit_id_seq'::regclass);
+
+
+--
+-- Name: customer_credit_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY transactions ALTER COLUMN customer_credit_id SET DEFAULT nextval('transactions_customer_credit_id_seq'::regclass);
+
+
+--
+-- Name: control_debit_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY transactions ALTER COLUMN control_debit_id SET DEFAULT nextval('transactions_control_debit_id_seq'::regclass);
+
+
+--
+-- Name: control_credit_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY transactions ALTER COLUMN control_credit_id SET DEFAULT nextval('transactions_control_credit_id_seq'::regclass);
 
 
 --
@@ -199,10 +348,50 @@ ALTER TABLE ONLY customer_accounts
 
 
 --
+-- Name: transactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY transactions
+    ADD CONSTRAINT transactions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
+
+
+--
+-- Name: transactions_control_credit_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY transactions
+    ADD CONSTRAINT transactions_control_credit_id_fkey FOREIGN KEY (control_credit_id) REFERENCES control_accounts(id);
+
+
+--
+-- Name: transactions_control_debit_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY transactions
+    ADD CONSTRAINT transactions_control_debit_id_fkey FOREIGN KEY (control_debit_id) REFERENCES control_accounts(id);
+
+
+--
+-- Name: transactions_customer_credit_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY transactions
+    ADD CONSTRAINT transactions_customer_credit_id_fkey FOREIGN KEY (customer_credit_id) REFERENCES customer_accounts(id);
+
+
+--
+-- Name: transactions_customer_debit_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY transactions
+    ADD CONSTRAINT transactions_customer_debit_id_fkey FOREIGN KEY (customer_debit_id) REFERENCES customer_accounts(id);
 
 
 --
@@ -214,4 +403,6 @@ SET search_path TO "$user",public;
 INSERT INTO schema_migrations (version) VALUES ('20141223021457');
 
 INSERT INTO schema_migrations (version) VALUES ('20141223031759');
+
+INSERT INTO schema_migrations (version) VALUES ('20141223032753');
 
