@@ -126,6 +126,21 @@ ALTER SEQUENCE customer_accounts_id_seq OWNED BY customer_accounts.id;
 
 
 --
+-- Name: mv; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW mv AS
+ SELECT customer_accounts.id,
+    customer_accounts.user_id,
+    customer_accounts.type,
+    customer_accounts.balance,
+    customer_accounts.created_at,
+    customer_accounts.updated_at
+   FROM customer_accounts
+  WITH NO DATA;
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
