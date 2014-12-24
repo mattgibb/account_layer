@@ -3,12 +3,13 @@ class CreateTransactions < ActiveRecord::Migration
     execute %{
       CREATE TABLE transactions (
         id bigserial PRIMARY KEY,
-        debit_id bigserial REFERENCES accounts,
-        credit_id bigserial REFERENCES accounts,
+        debit_id bigint REFERENCES accounts,
+        credit_id bigint REFERENCES accounts,
         amount positive_currency,
         comment text,
         created_at created_at,
-        updated_at updated_at
+        updated_at updated_at,
+        CONSTRAINT dont_pay_yourself CHECK (debit_id <> credit_id)
       );
     }
   end
