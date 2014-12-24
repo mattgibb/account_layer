@@ -26,10 +26,18 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET search_path = public, pg_catalog;
 
 --
--- Name: created_at; Type: DOMAIN; Schema: public; Owner: -
+-- Name: audit_timestamp; Type: DOMAIN; Schema: public; Owner: -
 --
 
-CREATE DOMAIN created_at AS timestamp with time zone NOT NULL;
+CREATE DOMAIN audit_timestamp AS timestamp with time zone NOT NULL DEFAULT now();
+
+
+--
+-- Name: credit_or_debit; Type: DOMAIN; Schema: public; Owner: -
+--
+
+CREATE DOMAIN credit_or_debit AS text NOT NULL
+	CONSTRAINT credit_or_debit CHECK ((VALUE = ANY (ARRAY['credit'::text, 'debit'::text])));
 
 
 --
@@ -37,14 +45,6 @@ CREATE DOMAIN created_at AS timestamp with time zone NOT NULL;
 --
 
 CREATE DOMAIN currency AS numeric NOT NULL DEFAULT 0;
-
-
---
--- Name: debit_or_credit; Type: DOMAIN; Schema: public; Owner: -
---
-
-CREATE DOMAIN debit_or_credit AS text NOT NULL
-	CONSTRAINT debit_or_credit CHECK ((VALUE = ANY (ARRAY['debit'::text, 'credit'::text])));
 
 
 --
@@ -72,10 +72,39 @@ CREATE DOMAIN positive_currency AS numeric NOT NULL DEFAULT 0
 
 
 --
--- Name: updated_at; Type: DOMAIN; Schema: public; Owner: -
+-- Name: update_account_balance(bigint); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE DOMAIN updated_at AS created_at DEFAULT now();
+CREATE FUNCTION update_account_balance(account_id bigint) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+        BEGIN
+          WITH debit AS (
+            SELECT coalesce(sum(amount), 0) total FROM transactions WHERE debit_id=account_id
+          ), credit AS (
+            SELECT coalesce(sum(amount), 0) total FROM transactions WHERE credit_id=account_id
+          )
+          UPDATE accounts SET balance = (CASE credit_or_debit WHEN 'debit' THEN 1 ELSE -1 END) *
+                                          ((SELECT total FROM debit) -
+                                           (SELECT total FROM credit))
+                          WHERE id=account_id;
+        END
+        $$;
+
+
+--
+-- Name: update_balances(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION update_balances() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+        BEGIN
+          PERFORM update_account_balance(NEW.debit_id);
+          PERFORM update_account_balance(NEW.credit_id);
+          RETURN NEW;
+        END
+        $$;
 
 
 SET default_tablespace = '';
@@ -88,7 +117,7 @@ SET default_with_oids = false;
 
 CREATE TABLE account_types (
     type text NOT NULL,
-    debit_or_credit debit_or_credit NOT NULL
+    credit_or_debit credit_or_debit NOT NULL
 );
 
 
@@ -101,9 +130,9 @@ CREATE TABLE accounts (
     name text NOT NULL,
     balance non_negative_currency,
     type text,
-    debit_or_credit debit_or_credit,
-    created_at created_at,
-    updated_at updated_at
+    credit_or_debit credit_or_debit,
+    created_at audit_timestamp,
+    updated_at audit_timestamp
 );
 
 
@@ -133,8 +162,8 @@ ALTER SEQUENCE accounts_id_seq OWNED BY accounts.id;
 CREATE TABLE customers (
     customer_id bigint NOT NULL,
     account_id bigint,
-    created_at created_at,
-    updated_at updated_at
+    created_at audit_timestamp,
+    updated_at audit_timestamp
 );
 
 
@@ -148,6 +177,41 @@ CREATE TABLE schema_migrations (
 
 
 --
+-- Name: transactions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE transactions (
+    id bigint NOT NULL,
+    credit_id bigint,
+    debit_id bigint,
+    amount positive_currency,
+    comment text,
+    created_at audit_timestamp,
+    updated_at audit_timestamp,
+    CONSTRAINT dont_pay_yourself CHECK ((debit_id <> credit_id))
+);
+
+
+--
+-- Name: transactions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE transactions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: transactions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE transactions_id_seq OWNED BY transactions.id;
+
+
+--
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -155,11 +219,18 @@ ALTER TABLE ONLY accounts ALTER COLUMN id SET DEFAULT nextval('accounts_id_seq':
 
 
 --
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY transactions ALTER COLUMN id SET DEFAULT nextval('transactions_id_seq'::regclass);
+
+
+--
 -- Name: account_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY account_types
-    ADD CONSTRAINT account_types_pkey PRIMARY KEY (type, debit_or_credit);
+    ADD CONSTRAINT account_types_pkey PRIMARY KEY (type, credit_or_debit);
 
 
 --
@@ -179,6 +250,14 @@ ALTER TABLE ONLY customers
 
 
 --
+-- Name: transactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY transactions
+    ADD CONSTRAINT transactions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -186,11 +265,18 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 
 
 --
+-- Name: update_balances; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER update_balances AFTER INSERT OR DELETE OR UPDATE ON transactions FOR EACH ROW EXECUTE PROCEDURE update_balances();
+
+
+--
 -- Name: accounts_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY accounts
-    ADD CONSTRAINT accounts_type_fkey FOREIGN KEY (type, debit_or_credit) REFERENCES account_types(type, debit_or_credit);
+    ADD CONSTRAINT accounts_type_fkey FOREIGN KEY (type, credit_or_debit) REFERENCES account_types(type, credit_or_debit);
 
 
 --
@@ -202,6 +288,22 @@ ALTER TABLE ONLY customers
 
 
 --
+-- Name: transactions_credit_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY transactions
+    ADD CONSTRAINT transactions_credit_id_fkey FOREIGN KEY (credit_id) REFERENCES accounts(id);
+
+
+--
+-- Name: transactions_debit_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY transactions
+    ADD CONSTRAINT transactions_debit_id_fkey FOREIGN KEY (debit_id) REFERENCES accounts(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -210,4 +312,8 @@ SET search_path TO "$user",public;
 INSERT INTO schema_migrations (version) VALUES ('20141223021457');
 
 INSERT INTO schema_migrations (version) VALUES ('20141223031759');
+
+INSERT INTO schema_migrations (version) VALUES ('20141223032753');
+
+INSERT INTO schema_migrations (version) VALUES ('20141223193247');
 

@@ -4,8 +4,8 @@ class CreateCustomers < ActiveRecord::Migration
       CREATE TABLE customers (
         customer_id bigint PRIMARY KEY,
         account_id bigint REFERENCES accounts,
-        created_at created_at,
-        updated_at updated_at
+        created_at audit_timestamp,
+        updated_at audit_timestamp
       );
     }
   end
