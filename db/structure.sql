@@ -161,7 +161,8 @@ ALTER SEQUENCE accounts_id_seq OWNED BY accounts.id;
 
 CREATE TABLE customers (
     customer_id bigint NOT NULL,
-    account_id bigint,
+    account_id bigint NOT NULL,
+    type text NOT NULL,
     created_at audit_timestamp,
     updated_at audit_timestamp
 );
@@ -186,9 +187,12 @@ CREATE TABLE transactions (
     debit_id bigint,
     amount positive_currency,
     comment text,
+    due_at timestamp with time zone,
+    paid_at timestamp with time zone,
     created_at audit_timestamp,
     updated_at audit_timestamp,
-    CONSTRAINT dont_pay_yourself CHECK ((debit_id <> credit_id))
+    CONSTRAINT dont_pay_yourself CHECK ((debit_id <> credit_id)),
+    CONSTRAINT either_due_or_paid CHECK (((due_at IS NOT NULL) OR (paid_at IS NOT NULL)))
 );
 
 
@@ -242,19 +246,19 @@ ALTER TABLE ONLY accounts
 
 
 --
--- Name: customers_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY customers
-    ADD CONSTRAINT customers_pkey PRIMARY KEY (customer_id);
-
-
---
 -- Name: transactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY transactions
     ADD CONSTRAINT transactions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: unique_customer_account; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY customers
+    ADD CONSTRAINT unique_customer_account PRIMARY KEY (customer_id, type);
 
 
 --
@@ -316,4 +320,6 @@ INSERT INTO schema_migrations (version) VALUES ('20141223031759');
 INSERT INTO schema_migrations (version) VALUES ('20141223032753');
 
 INSERT INTO schema_migrations (version) VALUES ('20141223193247');
+
+INSERT INTO schema_migrations (version) VALUES ('20141224065220');
 
