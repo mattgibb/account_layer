@@ -33,5 +33,8 @@ module AccountLayer
 
     # sql schema dump
     config.active_record.schema_format = :sql
+
+    # autoload lib
+    config.autoload_paths << Rails.root.join('lib/omniauth/strategies/')
   end
 end
