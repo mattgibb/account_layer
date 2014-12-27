@@ -156,6 +156,18 @@ ALTER SEQUENCE accounts_id_seq OWNED BY accounts.id;
 
 
 --
+-- Name: admins; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE admins (
+    email text NOT NULL,
+    name text NOT NULL,
+    created_at audit_timestamp,
+    updated_at audit_timestamp
+);
+
+
+--
 -- Name: customers; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -246,6 +258,14 @@ ALTER TABLE ONLY accounts
 
 
 --
+-- Name: admins_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY admins
+    ADD CONSTRAINT admins_pkey PRIMARY KEY (email);
+
+
+--
 -- Name: transactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -322,4 +342,6 @@ INSERT INTO schema_migrations (version) VALUES ('20141223032753');
 INSERT INTO schema_migrations (version) VALUES ('20141223193247');
 
 INSERT INTO schema_migrations (version) VALUES ('20141224065220');
+
+INSERT INTO schema_migrations (version) VALUES ('20141227163427');
 
