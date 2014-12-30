@@ -1,2 +1,2 @@
-class CustomerAccount < ActiveRecord::Base
+class CustomerAccount < Account
 end

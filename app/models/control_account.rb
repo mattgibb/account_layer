@@ -1,2 +1,2 @@
-class ControlAccount < ActiveRecord::Base
+class ControlAccount < Account
 end
