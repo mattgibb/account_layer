@@ -3,7 +3,6 @@ TransactionsListItem = React.createClass
     React.DOM.li({}, @props.transaction.name)
 
 TransactionsList = React.createClass
-  # Component's API method
   getInitialState: -> 
     search: ''
 
