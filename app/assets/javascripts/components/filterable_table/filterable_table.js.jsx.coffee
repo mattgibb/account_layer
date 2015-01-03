@@ -1,4 +1,4 @@
-@FilterableTable = React.createClass
+FilterableTable = React.createClass
   getInitialState: ->
     filterText: ''
   render: ->
@@ -13,4 +13,4 @@
   handleUserInput: (filterText) ->
     @setState filterText: filterText
 
-
+@FilterableTable = React.createFactory FilterableTable

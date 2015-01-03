@@ -1,2 +1,4 @@
 $ ->
-  React.render `<AdminApp />`, document.getElementById('app')
+  root = document.getElementById 'app'
+  adminName = root.getAttribute 'data-admin-name'
+  React.render AdminApp(adminName: adminName), root

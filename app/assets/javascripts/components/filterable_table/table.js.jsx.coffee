@@ -1,4 +1,4 @@
-@Table = React.createClass
+Table = React.createClass
   render: ->
     lastCategory = null
     rows = @props.records.map (record) ->
@@ -13,3 +13,4 @@
        <tbody>{rows}</tbody>
      </table>`
 
+@Table = React.createFactory Table

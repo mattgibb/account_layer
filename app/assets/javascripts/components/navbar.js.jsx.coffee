@@ -1,26 +1,44 @@
-@NavBar = React.createClass
-  getInitialState: ->
-    page: 'Home'
+NavBarItem = React.createClass
+  render: ->
+    `<li><a href="#">{this.props.children}</a></li>`
 
+NavBar = React.createClass
   setPage: (event) ->
-    alert event
-    @setState page: event.target.id
-
-  handleClick: (e) ->
-    @setState
-      page: e.target.textContent
+    @props.setPage event.target.textContent
 
   pages: [
     'Home'
     'Accounts'
     'Transactions'
   ]
-  
-  createItem:  (page) =>
-    `<li onClick={this.handleClick} key={page}>{page}</li>`
+
+  createItem: (page) ->
+    `<NavBarItem active={page == this.props.page}
+                 onClick={this.handleClick}
+                 key={page}>{page}</NavBarItem>`
 
   render: ->
-    `<div>
-       <ul>{this.pages.map(this.createItem)}</ul>
-       <p>The page is {this.state.page}</p>
-     </div>`
+    `<nav className="navbar navbar-fixed-top navbar-inverse">
+       <div className="container">
+         <div className="navbar-header">
+           <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+             <span className="sr-only">Toggle navigation</span>
+             <span className="icon-bar"></span>
+             <span className="icon-bar"></span>
+             <span className="icon-bar"></span>
+           </button>
+           <a className="navbar-brand" href="#">Account Layer</a>
+         </div>
+         <div id="navbar" className="collapse navbar-collapse">
+           <ul className="nav navbar-nav">
+             {this.pages.map(this.createItem)}
+           </ul>
+           <ul className="nav navbar-nav navbar-right">
+             <li><p className="admin-name">{this.props.adminName}</p></li>
+             <li><a href="/signout">Sign Out</a></li>
+           </ul>
+         </div>
+       </div>
+     </nav>`
+
+@NavBar = React.createFactory NavBar

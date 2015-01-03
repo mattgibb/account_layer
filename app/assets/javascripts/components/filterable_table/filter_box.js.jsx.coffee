@@ -1,4 +1,4 @@
-@FilterBox = React.createClass
+FilterBox = React.createClass
   handleChange: ->
     console.log "changed"
     @props.onUserInput(@refs.filterTextInput.getDOMNode().value)
@@ -16,3 +16,5 @@
          Only show products in stock
        </p>
      </form>`
+
+@FilterBox = React.createFactory FilterBox

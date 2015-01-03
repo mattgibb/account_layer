@@ -1,6 +1,14 @@
+{div, p, h1} = React.DOM
+
 React.initializeTouchEvents true
 
-window.AdminApp = React.createClass
+AdminApp = React.createClass
+  getInitialState: ->
+    page: 'Home'
+
+  setPage: (page) ->
+    @setState page: page
+
   records: [
     {category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football'},
     {category: 'Sporting Goods', price: '$9.99', stocked: true, name: 'Baseball'},
@@ -10,5 +18,11 @@ window.AdminApp = React.createClass
     {category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7'}
   ]
   render: ->
-    `<div><NavBar /><FilterableTable records={this.records}/></div>`
+    div {},
+      NavBar adminName: @props.adminName, page: @state.page, setPage: @setPage
+      div className: 'container',
+        div {},
+          h1 {}, "The page is #{@state.page}"
+          FilterableTable records: @records
 
+@AdminApp = React.createFactory AdminApp
