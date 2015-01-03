@@ -35,6 +35,10 @@ gem "omniauth-oauth2"
 
 gem 'react-rails', '~> 0.12'
 
+# bootstrap for people who can't make things look nice
+gem 'bootstrap-sass', '~> 3.3.1'
+gem 'autoprefixer-rails'
+
 group :development, :test do
   gem 'rspec-rails'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
