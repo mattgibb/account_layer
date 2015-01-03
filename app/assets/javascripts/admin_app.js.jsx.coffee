@@ -12,7 +12,7 @@ AdminApp = React.createClass
   componentDidMount: ->
     transactions = new AccountLayer.Collections.Transactions
     transactions.fetch().done ->
-      setState
+      #setState
 
   render: ->
     div {},
