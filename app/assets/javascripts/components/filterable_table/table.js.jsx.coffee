@@ -8,15 +8,16 @@ Table = React.createClass
     some: "heading", another: "column"
 
   render: ->
-    window.a = @props.records
+    attributes = @props.records.attributes
+
     table className: 'table table-bordered table-hover table-striped',
       thead {},
-        _.map @headings, (sortTitle, sortKey) =>
-          th key: sortKey, sortTitle
+        _.map attributes, (attribute) =>
+          th key: attribute, attribute
 
       tbody {},
         _.map @props.records.models, (model) =>
-          tr key: model.get('id'),
-            td {}, "hello"
+          tr key: model.get('id'), _.map attributes, (attribute) ->
+            td {}, model.attributes[attribute]
 
 AccountLayer.Views.Table = React.createFactory Table
