@@ -6,13 +6,15 @@ AdminApp = React.createClass
   getInitialState: ->
     page: 'Home'
 
+  fetch: (page) ->
+    @getCollection()[page]?.fetch().done ->
+
   setPage: (page) ->
+    @fetch page
     @setState page: page
 
   componentDidMount: ->
-    transactions = new AccountLayer.Collections.Transactions
-    transactions.fetch().done ->
-      #setState
+    @fetch @state.page
 
   render: ->
     div {},

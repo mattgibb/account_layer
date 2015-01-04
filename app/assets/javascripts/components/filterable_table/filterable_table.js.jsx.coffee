@@ -16,9 +16,10 @@ FilterableTable = React.createClass
         _.map @getCollection(), (model) =>
           tr key: model.get('id'),
             @f
+
   render: ->
     div {},
-      Table records: @props.records,
+      TransactionList {},
       FilterBox filterText: @state.filterText, onUserInput: @handleUserInput
 
   handleUserInput: (filterText) ->

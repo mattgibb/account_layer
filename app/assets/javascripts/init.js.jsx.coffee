@@ -2,5 +2,9 @@ React.initializeTouchEvents true
 
 $ ->
   root = document.getElementById 'app'
-  adminName = root.getAttribute 'data-admin-name'
-  React.render AdminApp(adminName: adminName), root
+  app = AdminApp
+    adminName: root.getAttribute 'data-admin-name'
+    collection:
+      Transactions: new AccountLayer.Collections.Transactions
+
+  React.render app, root

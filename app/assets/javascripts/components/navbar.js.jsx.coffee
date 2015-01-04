@@ -1,6 +1,15 @@
+{li, a} = React.DOM
+
 NavBarItem = React.createClass
+  classes: ->
+    "active" if @props.active
   render: ->
-    `<li><a href="#">{this.props.children}</a></li>`
+    li {},
+      a 
+        href: "#"
+        className: @classes()
+        onClick: @props.onClick
+        @props.children
 
 NavBar = React.createClass
   setPage: (event) ->
@@ -14,7 +23,7 @@ NavBar = React.createClass
 
   createItem: (page) ->
     `<NavBarItem active={page == this.props.page}
-                 onClick={this.handleClick}
+                 onClick={this.setPage}
                  key={page}>{page}</NavBarItem>`
 
   render: ->
