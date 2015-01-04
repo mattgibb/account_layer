@@ -50,4 +50,4 @@ NavBar = React.createClass
        </div>
      </nav>`
 
-@NavBar = React.createFactory NavBar
+AccountLayer.Views.NavBar = React.createFactory NavBar

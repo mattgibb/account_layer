@@ -1,16 +1,22 @@
-Table = React.createClass
-  render: ->
-    lastCategory = null
-    rows = @props.records.map (record) ->
-      `<Row record={record} key={record.id} />`
-    `<table>
-       <thead>
-         <tr>
-           <th>Name</th>
-           <th>Price</th>
-         </tr>
-       </thead>
-       <tbody>{rows}</tbody>
-     </table>`
+{div, table, thead, tbody, th, tr, td} = React.DOM
 
-@Table = React.createFactory Table
+Table = React.createClass
+  mixins: [Backbone.React.Component.mixin]
+
+  headings: ->
+    @props.records[0]
+    some: "heading", another: "column"
+
+  render: ->
+    window.a = @props.records
+    table className: 'table table-bordered table-hover table-striped',
+      thead {},
+        _.map @headings, (sortTitle, sortKey) =>
+          th key: sortKey, sortTitle
+
+      tbody {},
+        _.map @props.records.models, (model) =>
+          tr key: model.get('id'),
+            td {}, "hello"
+
+AccountLayer.Views.Table = React.createFactory Table

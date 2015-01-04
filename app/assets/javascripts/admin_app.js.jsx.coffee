@@ -6,22 +6,22 @@ AdminApp = React.createClass
   getInitialState: ->
     page: 'Home'
 
-  fetch: (page) ->
-    @getCollection()[page]?.fetch().done ->
+  table: ->
+    records = @getCollection()[@state.page.toLowerCase()]
+    AccountLayer.Views.FilterableTable records: records if records
 
-  setPage: (page) ->
-    @fetch page
-    @setState page: page
+  setPage: (newPage) ->
+    @getCollection()[newPage.toLowerCase()]?.fetch()
+    @setState page: newPage
 
-  componentDidMount: ->
-    @fetch @state.page
+  # componentDidMount: @fetchRecords
 
   render: ->
     div {},
-      NavBar adminName: @props.adminName, page: @state.page, setPage: @setPage
+      AccountLayer.Views.NavBar adminName: @props.adminName, page: @state.page, setPage: @setPage
       div className: 'container',
         div {},
           h1 {}, "The page is #{@state.page}"
-          FilterableTable
+          @table()
 
 @AdminApp = React.createFactory AdminApp

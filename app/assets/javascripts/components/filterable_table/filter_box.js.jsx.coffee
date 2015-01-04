@@ -17,4 +17,4 @@ FilterBox = React.createClass
        </p>
      </form>`
 
-@FilterBox = React.createFactory FilterBox
+AccountLayer.Views.FilterBox = React.createFactory FilterBox
