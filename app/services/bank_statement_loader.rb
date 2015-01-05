@@ -4,14 +4,21 @@ class BankStatementLoader
   end
 
   def load
+    return false if statement_already_loaded?
+
     ActiveRecord::Base.transaction do
       save_statement
       save_transactions
     end
+    true
   end
 
   private
     
+    def statement_already_loaded?
+      BankStatement.where(contents: @statement).exists?
+    end
+
     def save_statement
       @statement = BankStatement.create admin_id: @admin.id, 
                                         contents: @statement,

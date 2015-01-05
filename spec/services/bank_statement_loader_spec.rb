@@ -6,6 +6,10 @@ describe BankStatementLoader do
 
   subject { described_class.new admin, file_string }
 
+  it "returns true" do
+    expect(subject.load).to be true
+  end
+
   it "records the file being loaded" do
     expect{subject.load}.to change{BankStatement.count}.by 1
   end
@@ -15,7 +19,7 @@ describe BankStatementLoader do
     expect(BankStatement.first.contents).to eq file_string
   end
 
-  it "extracts the acount number" do
+  it "extracts the account number" do
     subject.load
     expect(BankStatement.first.account_number).to eq 3665495713
   end
@@ -35,10 +39,10 @@ describe BankStatementLoader do
   end
 
   context "reloading the same file" do
+    before { described_class.new(admin, file_string).load }
 
-  end
-
-  context "loading a file from the wrong account" do
-
+    it "returns false" do
+      expect(subject.load).to be false
+    end
   end
 end
