@@ -2,9 +2,12 @@ React.initializeTouchEvents true
 
 $ ->
   root = document.getElementById 'app'
-  app = AdminApp
+  collections = {}
+  _.each AccountLayer.Collections, (constructor, name) ->
+    collections[name.toLowerCase()] = new constructor
+
+  app = AccountLayer.Views.AdminApp
     adminName: root.getAttribute 'data-admin-name'
-    collection:
-      transactions: new AccountLayer.Collections.Transactions
+    collection: collections
 
   React.render app, root

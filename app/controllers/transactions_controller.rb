@@ -5,12 +5,10 @@ class TransactionsController < ApplicationController
     @transactions = Transaction.all
   end
 
-  def show
-  end
-
   def create
     @transaction = Transaction.new(transaction_params)
 
+    byebug
     if @transaction.save
       render :show, status: :created, location: @transaction
     else
@@ -37,6 +35,6 @@ class TransactionsController < ApplicationController
     end
 
     def transaction_params
-      params[:transaction]
+      params[:transaction].permit :amount, :due_at, :paid_at, :credit_id, :debit_id, :comment
     end
 end

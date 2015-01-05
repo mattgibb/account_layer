@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  resources :accounts,
+            only: [:index, :show],
+            constraints: {format: :json}
+
   resources :transactions, 
             only: [:index, :show, :create],
             constraints: {format: :json}

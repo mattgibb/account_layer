@@ -24,4 +24,4 @@ AdminApp = React.createClass
           h1 {}, "The page is #{@state.page}"
           @table()
 
-@AdminApp = React.createFactory AdminApp
+AccountLayer.Views.AdminApp = React.createFactory AdminApp

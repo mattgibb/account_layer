@@ -129,7 +129,7 @@ CREATE TABLE accounts (
     id bigint NOT NULL,
     name text NOT NULL,
     balance non_negative_currency,
-    type text,
+    type text NOT NULL,
     credit_or_debit credit_or_debit,
     created_at audit_timestamp,
     updated_at audit_timestamp
@@ -195,8 +195,8 @@ CREATE TABLE schema_migrations (
 
 CREATE TABLE transactions (
     id bigint NOT NULL,
-    credit_id bigint,
-    debit_id bigint,
+    credit_id bigint NOT NULL,
+    debit_id bigint NOT NULL,
     amount positive_currency,
     comment text,
     due_at timestamp with time zone,
@@ -341,7 +341,7 @@ INSERT INTO schema_migrations (version) VALUES ('20141223032753');
 
 INSERT INTO schema_migrations (version) VALUES ('20141223193247');
 
-INSERT INTO schema_migrations (version) VALUES ('20141224065220');
-
 INSERT INTO schema_migrations (version) VALUES ('20141227163427');
+
+INSERT INTO schema_migrations (version) VALUES ('20150105114248');
 
