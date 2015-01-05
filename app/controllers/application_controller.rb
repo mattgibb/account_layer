@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   before_action :require_login
 
   rescue_from NotAuthenticated do
-    render "Do one.", status: 401
+    render text: "Do one.", status: 401
   end
 
   helper_method :current_admin
