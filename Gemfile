@@ -39,6 +39,14 @@ gem 'react-rails', '~> 0.12'
 gem 'bootstrap-sass', '~> 3.3.1'
 gem 'autoprefixer-rails'
 
+# Wells Fargo Quicken file format parser
+gem 'quicken_parser'
+
+group :development do
+  gem 'guard-rspec', require: false
+  gem 'terminal-notifier-guard', '~> 1.6.1'
+end
+
 group :development, :test do
   gem 'rspec-rails'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -49,4 +57,7 @@ group :development, :test do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+  
+  # factories instead of fixtures
+  gem 'factory_girl_rails'
 end
