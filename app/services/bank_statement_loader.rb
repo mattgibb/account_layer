@@ -1,6 +1,7 @@
 class BankStatementLoader
-  def initialize(admin, statement_string)
-    @admin, @statement = admin, statement_string
+  def initialize(admin, statement)
+    @admin = admin
+    @statement = statement.respond_to?(:read) ? statement.read : statement
   end
 
   def load
