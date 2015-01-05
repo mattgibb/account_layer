@@ -195,6 +195,7 @@ CREATE TABLE bank_statements (
     id bigint NOT NULL,
     admin_id bigint NOT NULL,
     contents text NOT NULL,
+    account_number bigint,
     created_at audit_timestamp,
     updated_at audit_timestamp
 );
@@ -217,6 +218,43 @@ CREATE SEQUENCE bank_statements_id_seq
 --
 
 ALTER SEQUENCE bank_statements_id_seq OWNED BY bank_statements.id;
+
+
+--
+-- Name: bank_transactions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE bank_transactions (
+    id bigint NOT NULL,
+    bank_statement_id bigint NOT NULL,
+    transaction_type text,
+    date_posted timestamp without time zone,
+    amount currency,
+    transaction_id bigint,
+    name text,
+    memo text,
+    created_at audit_timestamp,
+    updated_at audit_timestamp
+);
+
+
+--
+-- Name: bank_transactions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE bank_transactions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: bank_transactions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE bank_transactions_id_seq OWNED BY bank_transactions.id;
 
 
 --
@@ -304,6 +342,13 @@ ALTER TABLE ONLY bank_statements ALTER COLUMN id SET DEFAULT nextval('bank_state
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY bank_transactions ALTER COLUMN id SET DEFAULT nextval('bank_transactions_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY transactions ALTER COLUMN id SET DEFAULT nextval('transactions_id_seq'::regclass);
 
 
@@ -321,6 +366,14 @@ ALTER TABLE ONLY account_types
 
 ALTER TABLE ONLY accounts
     ADD CONSTRAINT accounts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: admins_email_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY admins
+    ADD CONSTRAINT admins_email_key UNIQUE (email);
 
 
 --
@@ -345,6 +398,14 @@ ALTER TABLE ONLY bank_statements
 
 ALTER TABLE ONLY bank_statements
     ADD CONSTRAINT bank_statements_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: bank_transactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY bank_transactions
+    ADD CONSTRAINT bank_transactions_pkey PRIMARY KEY (id);
 
 
 --
@@ -394,6 +455,14 @@ ALTER TABLE ONLY bank_statements
 
 
 --
+-- Name: bank_transactions_bank_statement_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY bank_transactions
+    ADD CONSTRAINT bank_transactions_bank_statement_id_fkey FOREIGN KEY (bank_statement_id) REFERENCES bank_statements(id);
+
+
+--
 -- Name: customers_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -438,4 +507,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150105114248');
 INSERT INTO schema_migrations (version) VALUES ('20150105181720');
 
 INSERT INTO schema_migrations (version) VALUES ('20150105183012');
+
+INSERT INTO schema_migrations (version) VALUES ('20150105190348');
 
