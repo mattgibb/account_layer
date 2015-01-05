@@ -2,7 +2,9 @@ require "rails_helper"
 
 RSpec.describe "Transactions" do
   it_behaves_like "a resource", :transactions
-  let(:transaction_params) { {transaction: attributes_for(:transaction)} }
+  let(:debit_id)  { create(:debit_account).id }
+  let(:credit_id) { create(:credit_account).id }
+  let(:transaction_params) { {transaction: attributes_for(:transaction, credit_id: credit_id, debit_id: debit_id)} }
 
   context "without logging in" do
     it { get_json  "/transactions"; expect(response.code).to eq "401" }
@@ -13,7 +15,7 @@ RSpec.describe "Transactions" do
     before { login }
 
     describe "create" do
-      before { byebug; post_json "/transactions", transaction_params } 
+      before { post_json "/transactions", transaction_params } 
 
       it "is successful" do
         expect(response.code).to eq "201"
