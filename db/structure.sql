@@ -163,8 +163,60 @@ CREATE TABLE admins (
     email text NOT NULL,
     name text NOT NULL,
     created_at audit_timestamp,
+    updated_at audit_timestamp,
+    id bigint NOT NULL
+);
+
+
+--
+-- Name: admins_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE admins_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: admins_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE admins_id_seq OWNED BY admins.id;
+
+
+--
+-- Name: bank_statements; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE bank_statements (
+    id bigint NOT NULL,
+    admin_id bigint NOT NULL,
+    contents text NOT NULL,
+    created_at audit_timestamp,
     updated_at audit_timestamp
 );
+
+
+--
+-- Name: bank_statements_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE bank_statements_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: bank_statements_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE bank_statements_id_seq OWNED BY bank_statements.id;
 
 
 --
@@ -238,6 +290,20 @@ ALTER TABLE ONLY accounts ALTER COLUMN id SET DEFAULT nextval('accounts_id_seq':
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY admins ALTER COLUMN id SET DEFAULT nextval('admins_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY bank_statements ALTER COLUMN id SET DEFAULT nextval('bank_statements_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY transactions ALTER COLUMN id SET DEFAULT nextval('transactions_id_seq'::regclass);
 
 
@@ -262,7 +328,23 @@ ALTER TABLE ONLY accounts
 --
 
 ALTER TABLE ONLY admins
-    ADD CONSTRAINT admins_pkey PRIMARY KEY (email);
+    ADD CONSTRAINT admins_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: bank_statements_contents_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY bank_statements
+    ADD CONSTRAINT bank_statements_contents_key UNIQUE (contents);
+
+
+--
+-- Name: bank_statements_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY bank_statements
+    ADD CONSTRAINT bank_statements_pkey PRIMARY KEY (id);
 
 
 --
@@ -301,6 +383,14 @@ CREATE TRIGGER update_balances AFTER INSERT OR DELETE OR UPDATE ON transactions 
 
 ALTER TABLE ONLY accounts
     ADD CONSTRAINT accounts_type_fkey FOREIGN KEY (type, credit_or_debit) REFERENCES account_types(type, credit_or_debit);
+
+
+--
+-- Name: bank_statements_admin_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY bank_statements
+    ADD CONSTRAINT bank_statements_admin_id_fkey FOREIGN KEY (admin_id) REFERENCES admins(id);
 
 
 --
@@ -344,4 +434,8 @@ INSERT INTO schema_migrations (version) VALUES ('20141223193247');
 INSERT INTO schema_migrations (version) VALUES ('20141227163427');
 
 INSERT INTO schema_migrations (version) VALUES ('20150105114248');
+
+INSERT INTO schema_migrations (version) VALUES ('20150105181720');
+
+INSERT INTO schema_migrations (version) VALUES ('20150105183012');
 
