@@ -1,6 +1,5 @@
 = README
 
-
 == Install Ruby
   brew update
   brew install rbenv ruby-build
@@ -26,10 +25,10 @@ or ask Matt for his ones, configured for localhost:3000.
   bundle exec rspec
 
 === Run continuously
-bundle exec guard start
+  bundle exec guard start
 
 == Server (job queues, cache servers, search engines, etc.)
-foreman start
+  foreman start
 
 == Deployment instructions
 
