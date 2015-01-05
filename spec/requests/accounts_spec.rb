@@ -1,35 +1,17 @@
 require "rails_helper"
 
 RSpec.describe "Transactions" do
-  include AuthenticationHelpers
-  include JSONHelpers
-
-  context "when logged in" do
-    before { login }
-
-    describe "index" do
-      before { get_json '/transactions' }
-
-      it "is successful" do
-        expect(response.code).to eq "200"
-      end
-
-      it "includes the transactions" do
-        expect(json).to include "models" 
-        expect(json["models"]).to be_a Array
-      end
-
-      it "includes the field names" do
-        expect(json).to include "attributes" 
-      end
-    end
-  end
+  it_behaves_like "a resource"
 
   context "without logging in" do
-    it { get_json "/transactions";   expect(response.code).to eq "401" }
-    it { get_json "/transactions/1"; expect(response.code).to eq "401" }
+    let(:id) { create(:transaction).id }
 
-#     post "/widgets", :widget => {:name => "My Widget"}
+    it { get_json  "/transactions"; expect(response.code).to eq "401" }
+    it { post_json "/transactions"; expect(response.code).to eq "401" }
   end
+
+  # probably shouldn't allow deletes or updates?
+  it { expect{put_json    "/transactions/#{id}"}.to raise_error }
+  it { expect{delete_json "/transactions/#{id}"}.to raise_error }
 end
 

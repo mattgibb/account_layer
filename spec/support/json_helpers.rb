@@ -1,6 +1,8 @@
 module JSONHelpers
-  def get_json(url)
-    get url, format: :json
+  %i[get post put delete].each do |verb|
+    define_method "#{verb}_json" do |url|
+      send verb, url, format: :json
+    end
   end
 
   def json
