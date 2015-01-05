@@ -1,14 +1,4 @@
 # No need for a Rails model, just bung the compound types in the db
-ActiveRecord::Base.connection.execute %{
-  INSERT INTO account_types VALUES
-    ('ControlAccount',  'credit'),
-    ('ControlAccount',  'debit'),
-    ('LoanAccount',     'debit'),
-    ('PayableAccount',  'debit'),
-    ('CashAccount',     'debit'),
-    ('HoldbackAccount', 'credit');
-}
-
 [
   ['Origination Fees', 'ControlAccount', 'credit'],
   ['Servicing Fees',   'ControlAccount', 'credit'],
