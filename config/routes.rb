@@ -9,6 +9,10 @@ Rails.application.routes.draw do
 
   resources :bank_statements, only: :create
 
+  resources :bank_transactions,
+            only: [:index, :show],
+            constraints: {format: :json}
+
   get '/auth/:provider/callback', to: 'sessions#create'
   get "/signout" => "sessions#destroy", as: :signout
   # The priority is based upon order of creation: first created -> highest priority.

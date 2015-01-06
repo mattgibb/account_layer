@@ -1,4 +1,4 @@
-RSpec.shared_examples "a resource" do |resource|
+RSpec.shared_examples "a viewable resource" do |resource|
   context "when logged in" do
     before { login }
 
@@ -21,6 +21,16 @@ RSpec.shared_examples "a resource" do |resource|
 
     describe "show" do
       before { get_json "/#{resource}/#{id}" }
+
+      it "replies with a #{resource.to_s.singularize}" do
+        expect(json["id"]).to eq id
+      end
     end
   end
+
+  context "without logging in" do
+    specify { get_json "/#{resource}"; expect(response.code).to eq "401" }
+    specify { get_json "/#{resource}/#{id}"; expect(response.code).to eq "401" }
+  end
+
 end

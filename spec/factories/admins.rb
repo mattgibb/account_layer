@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :admin do
-    name 'Ronny Baby'
-    email 'ronnybaby@lendlayer.com'
+    name {|n| "Admin #{n}" }
+    email {|n| "admin#{n}@lendlayer.com" }
   end
 end
