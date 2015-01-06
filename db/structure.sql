@@ -68,7 +68,7 @@ CREATE DOMAIN non_positive_currency AS numeric NOT NULL DEFAULT 0
 --
 
 CREATE DOMAIN positive_currency AS numeric NOT NULL DEFAULT 0
-	CONSTRAINT non_negative CHECK ((VALUE > (0)::numeric));
+	CONSTRAINT positive CHECK ((VALUE > (0)::numeric));
 
 
 --
@@ -234,7 +234,8 @@ CREATE TABLE bank_transactions (
     name text,
     memo text,
     created_at audit_timestamp,
-    updated_at audit_timestamp
+    updated_at audit_timestamp,
+    reconciliation_id bigint
 );
 
 
@@ -463,6 +464,14 @@ ALTER TABLE ONLY bank_transactions
 
 
 --
+-- Name: bank_transactions_reconciliation_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY bank_transactions
+    ADD CONSTRAINT bank_transactions_reconciliation_id_fkey FOREIGN KEY (reconciliation_id) REFERENCES transactions(id);
+
+
+--
 -- Name: customers_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -509,4 +518,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150105181720');
 INSERT INTO schema_migrations (version) VALUES ('20150105183012');
 
 INSERT INTO schema_migrations (version) VALUES ('20150105190348');
+
+INSERT INTO schema_migrations (version) VALUES ('20150106101756');
+
+INSERT INTO schema_migrations (version) VALUES ('20150106110247');
 
