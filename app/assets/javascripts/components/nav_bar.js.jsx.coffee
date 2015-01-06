@@ -19,6 +19,7 @@ NavBar = React.createClass
     'Home'
     'Accounts'
     'Transactions'
+    'BankTransactions'
   ]
 
   createItem: (page) ->
