@@ -10,10 +10,11 @@ Table = React.createClass
   render: ->
     attributes = @props.records.attributes
 
-    table className: 'table table-bordered table-hover table-striped',
+    table className: 'table table-bordered table-hover table-striped table-condensed',
       thead {},
-        _.map attributes, (attribute) =>
-          th key: attribute, attribute
+        tr {},
+          _.map attributes, (attribute) =>
+            th key: attribute, attribute
 
       tbody {},
         _.map @props.records.models, (model) =>
