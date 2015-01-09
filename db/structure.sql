@@ -557,6 +557,14 @@ ALTER TABLE ONLY cohort_profiles
 
 
 --
+-- Name: cohort_profiles_unique_account_group; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY cohort_profiles
+    ADD CONSTRAINT cohort_profiles_unique_account_group UNIQUE (account_group_id);
+
+
+--
 -- Name: customer_profiles_lendlayer_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -570,6 +578,14 @@ ALTER TABLE ONLY customer_profiles
 
 ALTER TABLE ONLY customer_profiles
     ADD CONSTRAINT customer_profiles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: customer_profiles_unique_account_group; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY customer_profiles
+    ADD CONSTRAINT customer_profiles_unique_account_group UNIQUE (account_group_id);
 
 
 --
@@ -736,4 +752,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150108031403');
 INSERT INTO schema_migrations (version) VALUES ('20150109101459');
 
 INSERT INTO schema_migrations (version) VALUES ('20150109101511');
+
+INSERT INTO schema_migrations (version) VALUES ('20150109154546');
 
