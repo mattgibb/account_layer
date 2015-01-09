@@ -1,2 +1,0 @@
-class ControlAccount < Account
-end

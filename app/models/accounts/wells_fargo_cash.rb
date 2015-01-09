@@ -1,0 +1,2 @@
+class WellsFargoCash < Account
+end

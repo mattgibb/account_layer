@@ -1,0 +1,2 @@
+class OriginationFees < Account
+end

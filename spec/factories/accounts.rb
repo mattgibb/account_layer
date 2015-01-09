@@ -4,12 +4,21 @@ FactoryGirl.define do
       credit_or_debit "credit"
       name "Credit Account"
       type "ControlAccount"
+      belongs_to_customer false
     end
 
     factory :debit_account do
       credit_or_debit "debit"
-      name "ControlAccount"
+      name "Cash Account"
       type "ControlAccount"
+      belongs_to_customer false
+    end
+
+    factory :lender_cash_account do
+      credit_or_debit "credit"
+      name "Lender Cash Account"
+      type "LenderCashAccount"
+      belongs_to_customer true
     end
   end
 end

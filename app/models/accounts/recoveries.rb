@@ -1,0 +1,2 @@
+class Recoveries < Account
+end

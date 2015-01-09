@@ -1,0 +1,3 @@
+class ServicingFees < Account
+end
+

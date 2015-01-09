@@ -72,6 +72,36 @@ CREATE DOMAIN positive_currency AS numeric NOT NULL DEFAULT 0
 
 
 --
+-- Name: delete_transaction_update_balances(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION delete_transaction_update_balances() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+        BEGIN
+          PERFORM update_account_balance(OLD.debit_id);
+          PERFORM update_account_balance(OLD.credit_id);
+          RETURN NULL; -- result is ignored since this is an AFTER trigger
+        END
+        $$;
+
+
+--
+-- Name: insert_transaction_update_balances(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION insert_transaction_update_balances() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+        BEGIN
+          PERFORM update_account_balance(NEW.debit_id);
+          PERFORM update_account_balance(NEW.credit_id);
+          RETURN NULL; -- result is ignored since this is an AFTER trigger
+        END
+        $$;
+
+
+--
 -- Name: update_account_balance(bigint); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -93,16 +123,22 @@ CREATE FUNCTION update_account_balance(account_id bigint) RETURNS void
 
 
 --
--- Name: update_balances(); Type: FUNCTION; Schema: public; Owner: -
+-- Name: update_transaction_update_balances(); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION update_balances() RETURNS trigger
+CREATE FUNCTION update_transaction_update_balances() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
         BEGIN
-          PERFORM update_account_balance(NEW.debit_id);
-          PERFORM update_account_balance(NEW.credit_id);
-          RETURN NEW;
+          PERFORM update_account_balance(id) from 
+            (SELECT DISTINCT id FROM
+              (VALUES (OLD.credit_id),
+                      (OLD.debit_id),
+                      (NEW.credit_id),
+                      (NEW.debit_id)
+              ) account_ids(id)
+            ) distinct_account_ids(id);
+          RETURN NULL; -- result is ignored since this is an AFTER trigger
         END
         $$;
 
@@ -112,12 +148,15 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: account_types; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: account_groups; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE account_types (
+CREATE TABLE account_groups (
     type text NOT NULL,
-    credit_or_debit credit_or_debit NOT NULL
+    created_at audit_timestamp,
+    updated_at audit_timestamp,
+    id bigint NOT NULL,
+    CONSTRAINT account_group_types CHECK ((type = ANY (ARRAY['Lender'::text, 'Borrower'::text, 'School'::text, 'Cohort'::text])))
 );
 
 
@@ -127,12 +166,12 @@ CREATE TABLE account_types (
 
 CREATE TABLE accounts (
     id bigint NOT NULL,
-    name text NOT NULL,
     balance non_negative_currency,
     type text NOT NULL,
     credit_or_debit credit_or_debit,
     created_at audit_timestamp,
-    updated_at audit_timestamp
+    updated_at audit_timestamp,
+    account_group_id bigint
 );
 
 
@@ -259,16 +298,87 @@ ALTER SEQUENCE bank_transactions_id_seq OWNED BY bank_transactions.id;
 
 
 --
--- Name: customers; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: cohort_profiles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE customers (
-    customer_id bigint NOT NULL,
-    account_id bigint NOT NULL,
-    type text NOT NULL,
-    created_at audit_timestamp,
-    updated_at audit_timestamp
+CREATE TABLE cohort_profiles (
+    id bigint NOT NULL,
+    account_group_id bigint NOT NULL,
+    account_group_type text NOT NULL,
+    lendlayer_id bigint NOT NULL,
+    CONSTRAINT cohort_profiles_account_group_type_check CHECK ((account_group_type = 'Cohort'::text))
 );
+
+
+--
+-- Name: cohort_profiles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE cohort_profiles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: cohort_profiles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE cohort_profiles_id_seq OWNED BY cohort_profiles.id;
+
+
+--
+-- Name: customer_profiles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE customer_profiles (
+    id bigint NOT NULL,
+    account_group_id bigint NOT NULL,
+    account_group_type text NOT NULL,
+    lendlayer_id bigint NOT NULL,
+    name text NOT NULL,
+    CONSTRAINT customer_profiles_account_group_type_check CHECK ((account_group_type = ANY (ARRAY['Lender'::text, 'Borrower'::text, 'School'::text])))
+);
+
+
+--
+-- Name: customer_profiles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE customer_profiles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: customer_profiles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE customer_profiles_id_seq OWNED BY customer_profiles.id;
+
+
+--
+-- Name: customers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE customers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: customers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE customers_id_seq OWNED BY account_groups.id;
 
 
 --
@@ -322,6 +432,13 @@ ALTER SEQUENCE transactions_id_seq OWNED BY transactions.id;
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY account_groups ALTER COLUMN id SET DEFAULT nextval('customers_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY accounts ALTER COLUMN id SET DEFAULT nextval('accounts_id_seq'::regclass);
 
 
@@ -350,15 +467,29 @@ ALTER TABLE ONLY bank_transactions ALTER COLUMN id SET DEFAULT nextval('bank_tra
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY cohort_profiles ALTER COLUMN id SET DEFAULT nextval('cohort_profiles_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY customer_profiles ALTER COLUMN id SET DEFAULT nextval('customer_profiles_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY transactions ALTER COLUMN id SET DEFAULT nextval('transactions_id_seq'::regclass);
 
 
 --
--- Name: account_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: account_groups_unique_id_type; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY account_types
-    ADD CONSTRAINT account_types_pkey PRIMARY KEY (type, credit_or_debit);
+ALTER TABLE ONLY account_groups
+    ADD CONSTRAINT account_groups_unique_id_type UNIQUE (id, type);
 
 
 --
@@ -410,6 +541,46 @@ ALTER TABLE ONLY bank_transactions
 
 
 --
+-- Name: cohort_profiles_lendlayer_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY cohort_profiles
+    ADD CONSTRAINT cohort_profiles_lendlayer_id_key UNIQUE (lendlayer_id);
+
+
+--
+-- Name: cohort_profiles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY cohort_profiles
+    ADD CONSTRAINT cohort_profiles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: customer_profiles_lendlayer_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY customer_profiles
+    ADD CONSTRAINT customer_profiles_lendlayer_id_key UNIQUE (lendlayer_id);
+
+
+--
+-- Name: customer_profiles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY customer_profiles
+    ADD CONSTRAINT customer_profiles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: customers_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY account_groups
+    ADD CONSTRAINT customers_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: transactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -418,11 +589,18 @@ ALTER TABLE ONLY transactions
 
 
 --
--- Name: unique_customer_account; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: unique_customer_accounts; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY customers
-    ADD CONSTRAINT unique_customer_account PRIMARY KEY (customer_id, type);
+ALTER TABLE ONLY accounts
+    ADD CONSTRAINT unique_customer_accounts UNIQUE (type, account_group_id);
+
+
+--
+-- Name: unique_lendlayer_accounts; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX unique_lendlayer_accounts ON accounts USING btree (type) WHERE (account_group_id IS NULL);
 
 
 --
@@ -433,18 +611,32 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 
 
 --
--- Name: update_balances; Type: TRIGGER; Schema: public; Owner: -
+-- Name: delete_transaction_update_balances; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER update_balances AFTER INSERT OR DELETE OR UPDATE ON transactions FOR EACH ROW EXECUTE PROCEDURE update_balances();
+CREATE TRIGGER delete_transaction_update_balances AFTER INSERT ON transactions FOR EACH ROW EXECUTE PROCEDURE delete_transaction_update_balances();
 
 
 --
--- Name: accounts_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: insert_transaction_update_balances; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER insert_transaction_update_balances AFTER INSERT ON transactions FOR EACH ROW EXECUTE PROCEDURE insert_transaction_update_balances();
+
+
+--
+-- Name: update_transaction_update_balances; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER update_transaction_update_balances AFTER UPDATE ON transactions FOR EACH ROW EXECUTE PROCEDURE update_transaction_update_balances();
+
+
+--
+-- Name: accounts_customer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY accounts
-    ADD CONSTRAINT accounts_type_fkey FOREIGN KEY (type, credit_or_debit) REFERENCES account_types(type, credit_or_debit);
+    ADD CONSTRAINT accounts_customer_id_fkey FOREIGN KEY (account_group_id) REFERENCES account_groups(id);
 
 
 --
@@ -472,11 +664,19 @@ ALTER TABLE ONLY bank_transactions
 
 
 --
--- Name: customers_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: cohort_profiles_account_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY customers
-    ADD CONSTRAINT customers_account_id_fkey FOREIGN KEY (account_id) REFERENCES accounts(id);
+ALTER TABLE ONLY cohort_profiles
+    ADD CONSTRAINT cohort_profiles_account_group_id_fkey FOREIGN KEY (account_group_id, account_group_type) REFERENCES account_groups(id, type) MATCH FULL;
+
+
+--
+-- Name: customer_profiles_account_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY customer_profiles
+    ADD CONSTRAINT customer_profiles_account_group_id_fkey FOREIGN KEY (account_group_id, account_group_type) REFERENCES account_groups(id, type);
 
 
 --
@@ -522,4 +722,18 @@ INSERT INTO schema_migrations (version) VALUES ('20150105190348');
 INSERT INTO schema_migrations (version) VALUES ('20150106101756');
 
 INSERT INTO schema_migrations (version) VALUES ('20150106110247');
+
+INSERT INTO schema_migrations (version) VALUES ('20150106121045');
+
+INSERT INTO schema_migrations (version) VALUES ('20150106134633');
+
+INSERT INTO schema_migrations (version) VALUES ('20150106144212');
+
+INSERT INTO schema_migrations (version) VALUES ('20150106183157');
+
+INSERT INTO schema_migrations (version) VALUES ('20150108031403');
+
+INSERT INTO schema_migrations (version) VALUES ('20150109101459');
+
+INSERT INTO schema_migrations (version) VALUES ('20150109101511');
 

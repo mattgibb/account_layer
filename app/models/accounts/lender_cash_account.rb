@@ -1,0 +1,2 @@
+class LenderCashAccount < CustomerAccount
+end
