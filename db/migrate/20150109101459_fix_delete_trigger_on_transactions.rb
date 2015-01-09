@@ -54,7 +54,7 @@ class FixDeleteTriggerOnTransactions < ActiveRecord::Migration
         EXECUTE PROCEDURE update_transaction_update_balances();
 
       CREATE TRIGGER delete_transaction_update_balances
-        AFTER INSERT ON transactions
+        AFTER DELETE ON transactions
         FOR EACH ROW
         EXECUTE PROCEDURE delete_transaction_update_balances();
     }

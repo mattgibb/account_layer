@@ -630,7 +630,7 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 -- Name: delete_transaction_update_balances; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER delete_transaction_update_balances AFTER INSERT ON transactions FOR EACH ROW EXECUTE PROCEDURE delete_transaction_update_balances();
+CREATE TRIGGER delete_transaction_update_balances AFTER DELETE ON transactions FOR EACH ROW EXECUTE PROCEDURE delete_transaction_update_balances();
 
 
 --
