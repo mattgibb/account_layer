@@ -10,6 +10,15 @@
   cd account_layer
   bundle
 
+== Optional install environment
+  # allows you to use 'rake' instead of 'bundle exec rake' or 'bin/rake'
+  brew install direnv
+  direnv allow
+  echo "PATH_add bin" > .envrc
+  
+  # Makes tests, dev server, rake tasks super fast
+  bundle exec spring binstub --all
+
 == Initialize Database
   # edit config/database.yml if you like, then
   bin/rake db:create db:structure:load db:seed_account_types db:seed

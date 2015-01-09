@@ -45,6 +45,7 @@ gem 'quicken_parser'
 group :development do
   gem 'guard-rspec', require: false
   gem 'terminal-notifier-guard', '~> 1.6.1'
+  gem "spring-commands-rspec"
 end
 
 group :development, :test do
