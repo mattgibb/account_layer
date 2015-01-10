@@ -273,8 +273,7 @@ CREATE TABLE bank_transactions (
     name text,
     memo text,
     created_at audit_timestamp,
-    updated_at audit_timestamp,
-    reconciliation_id bigint
+    updated_at audit_timestamp
 );
 
 
@@ -382,6 +381,39 @@ ALTER SEQUENCE customers_id_seq OWNED BY account_groups.id;
 
 
 --
+-- Name: reconciliations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE reconciliations (
+    id bigint NOT NULL,
+    transaction_id bigint NOT NULL,
+    bank_transaction_id bigint NOT NULL,
+    admin_id bigint NOT NULL,
+    created_at audit_timestamp,
+    updated_at audit_timestamp
+);
+
+
+--
+-- Name: reconciliations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE reconciliations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: reconciliations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE reconciliations_id_seq OWNED BY reconciliations.id;
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -475,6 +507,13 @@ ALTER TABLE ONLY cohort_profiles ALTER COLUMN id SET DEFAULT nextval('cohort_pro
 --
 
 ALTER TABLE ONLY customer_profiles ALTER COLUMN id SET DEFAULT nextval('customer_profiles_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY reconciliations ALTER COLUMN id SET DEFAULT nextval('reconciliations_id_seq'::regclass);
 
 
 --
@@ -597,6 +636,30 @@ ALTER TABLE ONLY account_groups
 
 
 --
+-- Name: reconciliations_bank_transaction_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY reconciliations
+    ADD CONSTRAINT reconciliations_bank_transaction_id_key UNIQUE (bank_transaction_id);
+
+
+--
+-- Name: reconciliations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY reconciliations
+    ADD CONSTRAINT reconciliations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: reconciliations_transaction_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY reconciliations
+    ADD CONSTRAINT reconciliations_transaction_id_key UNIQUE (transaction_id);
+
+
+--
 -- Name: transactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -672,14 +735,6 @@ ALTER TABLE ONLY bank_transactions
 
 
 --
--- Name: bank_transactions_reconciliation_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY bank_transactions
-    ADD CONSTRAINT bank_transactions_reconciliation_id_fkey FOREIGN KEY (reconciliation_id) REFERENCES transactions(id);
-
-
---
 -- Name: cohort_profiles_account_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -693,6 +748,30 @@ ALTER TABLE ONLY cohort_profiles
 
 ALTER TABLE ONLY customer_profiles
     ADD CONSTRAINT customer_profiles_account_group_id_fkey FOREIGN KEY (account_group_id, account_group_type) REFERENCES account_groups(id, type);
+
+
+--
+-- Name: reconciliations_admin_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY reconciliations
+    ADD CONSTRAINT reconciliations_admin_id_fkey FOREIGN KEY (admin_id) REFERENCES admins(id);
+
+
+--
+-- Name: reconciliations_bank_transaction_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY reconciliations
+    ADD CONSTRAINT reconciliations_bank_transaction_id_fkey FOREIGN KEY (bank_transaction_id) REFERENCES bank_transactions(id);
+
+
+--
+-- Name: reconciliations_transaction_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY reconciliations
+    ADD CONSTRAINT reconciliations_transaction_id_fkey FOREIGN KEY (transaction_id) REFERENCES transactions(id);
 
 
 --
@@ -756,4 +835,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150109101511');
 INSERT INTO schema_migrations (version) VALUES ('20150109154546');
 
 INSERT INTO schema_migrations (version) VALUES ('20150109163704');
+
+INSERT INTO schema_migrations (version) VALUES ('20150110152111');
+
+INSERT INTO schema_migrations (version) VALUES ('20150110152230');
 

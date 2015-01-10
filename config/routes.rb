@@ -11,7 +11,11 @@ Rails.application.routes.draw do
 
   resources :bank_transactions,
             only: [:index, :show],
-            constraints: {format: :json}
+            constraints: {format: :json} do
+    member do
+      post 'reconciliation'
+    end
+  end
 
   get '/auth/:provider/callback', to: 'sessions#create'
   get "/signout" => "sessions#destroy", as: :signout

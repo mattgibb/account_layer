@@ -27,4 +27,10 @@ RSpec.describe Account do
       expect(debit_account.reload.balance ).to be_zero
     end
   end
+
+  describe "account accessors" do
+    describe ".wells_fargo_cash" do
+      specify { expect(Account.wells_fargo_cash).to eq Account::LendlayerAccount::WellsFargoCash.first }
+    end
+  end
 end
