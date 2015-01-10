@@ -1,2 +1,0 @@
-class LenderCashAccount < CustomerAccount
-end

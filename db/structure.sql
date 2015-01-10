@@ -156,7 +156,7 @@ CREATE TABLE account_groups (
     created_at audit_timestamp,
     updated_at audit_timestamp,
     id bigint NOT NULL,
-    CONSTRAINT account_group_types CHECK ((type = ANY (ARRAY['Lender'::text, 'Borrower'::text, 'School'::text, 'Cohort'::text])))
+    CONSTRAINT account_group_types CHECK ((type = ANY (ARRAY['AccountGroup::Lender'::text, 'AccountGroup::Borrower'::text, 'AccountGroup::School'::text, 'AccountGroup::Cohort'::text])))
 );
 
 
@@ -306,7 +306,7 @@ CREATE TABLE cohort_profiles (
     account_group_id bigint NOT NULL,
     account_group_type text NOT NULL,
     lendlayer_id bigint NOT NULL,
-    CONSTRAINT cohort_profiles_account_group_type_check CHECK ((account_group_type = 'Cohort'::text))
+    CONSTRAINT cohort_profiles_account_group_type_check CHECK ((account_group_type = 'AccountGroup::Cohort'::text))
 );
 
 
@@ -339,7 +339,7 @@ CREATE TABLE customer_profiles (
     account_group_type text NOT NULL,
     lendlayer_id bigint NOT NULL,
     name text NOT NULL,
-    CONSTRAINT customer_profiles_account_group_type_check CHECK ((account_group_type = ANY (ARRAY['Lender'::text, 'Borrower'::text, 'School'::text])))
+    CONSTRAINT customer_profiles_account_group_type_check CHECK ((account_group_type = ANY (ARRAY['AccountGroup::Lender'::text, 'AccountGroup::Borrower'::text, 'AccountGroup::School'::text])))
 );
 
 
@@ -754,4 +754,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150109101459');
 INSERT INTO schema_migrations (version) VALUES ('20150109101511');
 
 INSERT INTO schema_migrations (version) VALUES ('20150109154546');
+
+INSERT INTO schema_migrations (version) VALUES ('20150109163704');
 

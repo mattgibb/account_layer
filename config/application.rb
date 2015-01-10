@@ -36,8 +36,6 @@ module AccountLayer
 
     # autoload lib
     config.autoload_paths << Rails.root.join('lib/omniauth/strategies/')
-    config.autoload_paths << Rails.root.join('app/models/account_groups')
-    config.autoload_paths << Rails.root.join('app/models/accounts')
 
     config.react.addons = true
   end

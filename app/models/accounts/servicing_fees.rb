@@ -1,3 +1,0 @@
-class ServicingFees < Account
-end
-

@@ -1,2 +1,0 @@
-class WellsFargoCash < Account
-end

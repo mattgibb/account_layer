@@ -3,10 +3,8 @@ FactoryGirl.define do
     factory :borrower do
     end
 
-    factory :lender, class: Lender do
-      # after(:create) do |lender|
-      #   create :lender_cash_account, customer_id: lender.id
-      # end
+    factory :lender, class: AccountGroup::Lender do
+      association :cash_account, factory: :lender_cash_account
     end
 
     factory :school do

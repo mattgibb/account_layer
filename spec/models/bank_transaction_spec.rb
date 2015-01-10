@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe BankTransaction, :type => :model do
-  let(:reconciliation) { create :transaction }
+  let(:reconciliation) { create :lendlayer_transaction }
   subject { create :bank_transaction }
 
   describe "#reconciled?" do

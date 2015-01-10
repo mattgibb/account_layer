@@ -1,7 +1,8 @@
 require "rails_helper"
 
 RSpec.describe "Transactions" do
-  let(:id) { create(:transaction).id }
+  let(:transaction) { create(:lendlayer_transaction) }
+  let(:id) { transaction.id }
 
   it_behaves_like "a viewable resource", :transactions
 
@@ -9,8 +10,8 @@ RSpec.describe "Transactions" do
     before { login }
 
     describe "create" do
-      let(:debit_id)  { create(:debit_account).id }
-      let(:credit_id) { create(:credit_account).id }
+      let(:debit_id)  { Account::LendlayerAccount::WellsFargoCash.first.id }
+      let(:credit_id) { create(:lender_cash_account).id }
       let(:transaction_params) { {transaction: attributes_for(:transaction, credit_id: credit_id, debit_id: debit_id)} }
 
       before { post_json "/transactions", transaction_params } 

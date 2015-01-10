@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Accounts" do
-  let(:id) { create(:credit_account).id }
+  let(:id) { create(:lender_cash_account).id }
 
   it_behaves_like "a viewable resource", :accounts
 

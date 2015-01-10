@@ -1,2 +1,0 @@
-class OriginationFees < Account
-end
