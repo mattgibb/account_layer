@@ -254,6 +254,7 @@ DEPENDENCIES
   guard-rspec
   jbuilder (~> 2.0)
   jquery-rails
+  jwt
   omniauth-oauth2
   pg
   quicken_parser

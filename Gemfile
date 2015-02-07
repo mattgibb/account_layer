@@ -45,6 +45,9 @@ gem 'quicken_parser'
 # frontend app can access api
 gem 'rack-cors', require: 'rack/cors'
 
+# JWT auth
+gem 'jwt'
+
 group :development do
   gem 'guard-rspec', require: false
   gem 'terminal-notifier-guard', '~> 1.6.1'
@@ -61,7 +64,7 @@ group :development, :test do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
-  
+
   # factories instead of fixtures
   gem 'factory_girl_rails'
 end
