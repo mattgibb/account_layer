@@ -40,4 +40,12 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   config.react.variant = :development
+
+  # allow frontend app to access api
+  config.middleware.insert_before 0, "Rack::Cors" do
+    allow do
+      origins '*'
+      resource '*', headers: :any, methods: [:get, :post, :options]
+    end
+  end
 end

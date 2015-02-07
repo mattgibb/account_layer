@@ -42,6 +42,9 @@ gem 'autoprefixer-rails'
 # Wells Fargo Quicken file format parser
 gem 'quicken_parser'
 
+# frontend app can access api
+gem 'rack-cors', require: 'rack/cors'
+
 group :development do
   gem 'guard-rspec', require: false
   gem 'terminal-notifier-guard', '~> 1.6.1'
