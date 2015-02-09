@@ -10,4 +10,3 @@ RSpec.describe "Accounts" do
   it { expect{put_json    "/accounts/#{id}"}.to raise_error ActionController::RoutingError }
   it { expect{delete_json "/accounts/#{id}"}.to raise_error ActionController::RoutingError }
 end
-

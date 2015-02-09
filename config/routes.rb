@@ -3,7 +3,7 @@ Rails.application.routes.draw do
             only: [:index, :show],
             constraints: {format: :json}
 
-  resources :transactions, 
+  resources :transactions,
             only: [:index, :show, :create],
             constraints: {format: :json}
 
@@ -18,7 +18,6 @@ Rails.application.routes.draw do
   end
 
   get '/auth/:provider/callback', to: 'sessions#create'
-  get "/signout" => "sessions#destroy", as: :signout
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

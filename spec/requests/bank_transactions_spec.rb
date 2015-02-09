@@ -17,13 +17,14 @@ RSpec.describe "Bank Transactions" do
     let(:wells_fargo_cash) { Account::LendlayerAccount::WellsFargoCash.first }
     let(:other_account_id) { create(:lender_cash_account).id }
 
-    def do_post
+    def do_post(headers=nil)
       post_json "/bank_transactions/#{bank_transaction.id}/reconciliation",
-                account_id: other_account_id
+                {account_id: other_account_id},
+                headers
     end
 
     context "when logged in" do
-      before { login; do_post }
+      before { do_post auth_header }
 
       it "is successful" do
         expect(response.code).to eq "201"
@@ -42,7 +43,7 @@ RSpec.describe "Bank Transactions" do
         let(:other_account_id) { 987654321 }
 
         it "returns 404 not found" do
-          do_post
+          do_post auth_header
           expect(response.code).to eq "404"
         end
       end
@@ -53,5 +54,3 @@ RSpec.describe "Bank Transactions" do
     end
   end
 end
-
-

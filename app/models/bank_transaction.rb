@@ -3,7 +3,7 @@ class BankTransaction < ActiveRecord::Base
   has_one :reconciliation
 
   def reconciled?
-    reconciliation && reconciliation.persisted?
+    !!reconciliation && reconciliation.persisted?
   end
 
   def reconcile!(other_account_id, current_admin)

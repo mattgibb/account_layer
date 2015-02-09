@@ -5,16 +5,19 @@ RSpec.describe "Uploading bank statements" do
     path = Rails.root.join 'spec/fixtures/wells_fargo_statements/Checking2.qfx'
     qfx_file = Rack::Test::UploadedFile.new path, 'application/vnd.intu.qfx'
     statement_params = {bank_statement: {file: qfx_file}}
-    post '/bank_statements', statement_params
+    post '/bank_statements', statement_params, extra_headers
   end
 
   context "without logging in" do
+    let(:extra_headers) {{}}
+
     it { do_post; expect(response.code).to eq "401" }
   end
 
   context "when logged in" do
+    let(:extra_headers) { auth_header }
+
     before do
-      login
       do_post
     end
 
@@ -39,10 +42,9 @@ RSpec.describe "Uploading bank statements" do
 
     context "without a file attached" do
       it "replies with 'unprocessable entity'" do
-        post '/bank_statements'
+        post '/bank_statements', {}, auth_header
         expect(response.code).to eq "422"
       end
     end
   end
 end
-

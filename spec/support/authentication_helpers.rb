@@ -1,20 +1,17 @@
-module AuthenticationHelpers
-  # turn off actual OAuth
-  OmniAuth.config.test_mode = true
+ENV['JWT_SECRET'] ||= 'secret'
 
-  def login
-    sign_up
-    https!
-    get_via_redirect "/auth/google_apps_oauth2"
-    https! false
+module AuthenticationHelpers
+
+  def auth_header
+    {'Authorization' => "Bearer #{token}"}
   end
 
   private
+    def token
+      JWT.encode user_info, ENV['JWT_SECRET']
+    end
 
-    def sign_up
-      info = {email: 'ronnybaby@lendlayer.com', name: 'Ronny Baby'}
-
-      OmniAuth.config.add_mock :google_apps_oauth2, info: info
-      Admin.find_or_create_by info
+    def user_info
+      @user_info ||= create(:admin).as_json.slice 'email', 'name'
     end
 end
