@@ -28,6 +28,7 @@
 include 2 variables in the file .env 
   GOOGLE_CLIENT_ID="your client id"
   GOOGLE_CLIENT_SECRET="your client secret"
+  JWT_SECRET="secret"
 or ask Matt for his ones, configured for localhost:3000.
 
 == Run tests
