@@ -1,9 +1,5 @@
 class ApplicationController < ActionController::Base
   class NotAuthenticated < Exception; end
-  # Prevent CSRF attacks by raising an exception.
-  # For APIs, you may want to use :null_session instead.
-  protect_from_forgery with: :exception
-
   # switch this on for production
   # force_ssl
 
