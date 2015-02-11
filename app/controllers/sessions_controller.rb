@@ -13,7 +13,13 @@ class SessionsController < ApplicationController
   protected
 
   def build_token(admin)
-    JWT.encode({email: admin.email, exp: Time.now.to_i + 10.minutes}, ENV['JWT_SECRET'])
+    payload = {
+      email: admin.email,
+      name: admin.name,
+      exp: Time.now.to_i + 10.minutes
+    }
+
+    JWT.encode payload, ENV['JWT_SECRET']
   end
 
   def oauth_email

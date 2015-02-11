@@ -1,7 +1,6 @@
 ENV['JWT_SECRET'] ||= 'secret'
 
 module AuthenticationHelpers
-
   def auth_header
     {'Authorization' => "Bearer #{token}"}
   end

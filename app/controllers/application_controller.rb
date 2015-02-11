@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   rescue_from NotAuthenticated, with: :unauthorized
 
   rescue_from JWT::DecodeError,      with: :invalid_token
-  #rescue_from JWT::ExpiredSignature, with: :expired_token
+  rescue_from JWT::ExpiredSignature, with: :expired_token
 
   helper_method :current_admin
 
@@ -45,5 +45,7 @@ class ApplicationController < ActionController::Base
       unauthorized
     end
 
-    def expired_token; end
+    def expired_token
+      unauthorized
+    end
 end
