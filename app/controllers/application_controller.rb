@@ -46,6 +46,6 @@ class ApplicationController < ActionController::Base
     end
 
     def expired_token
-      unauthorized
+      render text: "Your JWT expired", status: 401
     end
 end
