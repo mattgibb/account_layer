@@ -6,7 +6,8 @@ FactoryGirl.define do
 
     factory :lendlayer_transaction do
       association :credit_account, factory: :lender_cash_account
-      debit_id Account::LendlayerAccount::WellsFargoCash.first.id
+      cash_account = Account::LendlayerAccount::WellsFargoCash.first
+      debit_id cash_account && cash_account.id
     end
   end
 end
