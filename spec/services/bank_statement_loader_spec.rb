@@ -26,6 +26,9 @@ describe BankStatementLoader do
 
     it "creates the BankTransactions" do
       expect{subject.load}.to change{BankTransaction.count}.by 30
+    end
+
+    it "saves the BankTransaction details" do
       expect{subject.load}.to change{
         BankTransaction.where(
           transaction_type: 'POS',
