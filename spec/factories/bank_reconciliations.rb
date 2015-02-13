@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :reconciliation do
+  factory :bank_reconciliation do
     admin
   end
 end

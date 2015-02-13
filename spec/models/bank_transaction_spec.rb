@@ -55,24 +55,24 @@ RSpec.describe BankTransaction do
   describe "#reconciled?" do
     subject { create :bank_transaction }
 
-    let(:reconciliation) do
+    let(:bank_reconciliation) do
       account = create(:lender).cash_account
       transaction = create :lendlayer_transaction, credit_account: account
-      build :reconciliation,
+      build :bank_reconciliation,
             transaction_id: transaction.id,
             bank_transaction_id: subject.id
     end
 
-    it "is false without a reconciliation" do
+    it "is false without a bank reconciliation" do
       expect(subject).not_to be_reconciled
     end
 
-    it "is false with a reconciliation that isn't persisted" do
+    it "is false with a bank reconciliation that isn't persisted" do
       expect(subject).not_to be_reconciled
     end
 
     it "is true with a persisted reconciliation" do
-      subject.reconciliation = reconciliation
+      subject.bank_reconciliation = bank_reconciliation
       subject.save
       expect(subject).to be_reconciled
     end

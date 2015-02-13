@@ -227,6 +227,39 @@ ALTER SEQUENCE admins_id_seq OWNED BY admins.id;
 
 
 --
+-- Name: bank_reconciliations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE bank_reconciliations (
+    id bigint NOT NULL,
+    transaction_id bigint NOT NULL,
+    bank_transaction_id bigint NOT NULL,
+    admin_id bigint NOT NULL,
+    created_at audit_timestamp,
+    updated_at audit_timestamp
+);
+
+
+--
+-- Name: bank_reconciliations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE bank_reconciliations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: bank_reconciliations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE bank_reconciliations_id_seq OWNED BY bank_reconciliations.id;
+
+
+--
 -- Name: bank_statements; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -459,39 +492,6 @@ ALTER SEQUENCE first_associates_transactions_id_seq OWNED BY first_associates_tr
 
 
 --
--- Name: reconciliations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE reconciliations (
-    id bigint NOT NULL,
-    transaction_id bigint NOT NULL,
-    bank_transaction_id bigint NOT NULL,
-    admin_id bigint NOT NULL,
-    created_at audit_timestamp,
-    updated_at audit_timestamp
-);
-
-
---
--- Name: reconciliations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE reconciliations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: reconciliations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE reconciliations_id_seq OWNED BY reconciliations.id;
-
-
---
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -563,6 +563,13 @@ ALTER TABLE ONLY admins ALTER COLUMN id SET DEFAULT nextval('admins_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY bank_reconciliations ALTER COLUMN id SET DEFAULT nextval('bank_reconciliations_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY bank_statements ALTER COLUMN id SET DEFAULT nextval('bank_statements_id_seq'::regclass);
 
 
@@ -605,13 +612,6 @@ ALTER TABLE ONLY first_associates_transactions ALTER COLUMN id SET DEFAULT nextv
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY reconciliations ALTER COLUMN id SET DEFAULT nextval('reconciliations_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY transactions ALTER COLUMN id SET DEFAULT nextval('transactions_id_seq'::regclass);
 
 
@@ -645,6 +645,14 @@ ALTER TABLE ONLY admins
 
 ALTER TABLE ONLY admins
     ADD CONSTRAINT admins_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: bank_reconciliations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY bank_reconciliations
+    ADD CONSTRAINT bank_reconciliations_pkey PRIMARY KEY (id);
 
 
 --
@@ -747,23 +755,15 @@ ALTER TABLE ONLY first_associates_transactions
 -- Name: reconciliations_bank_transaction_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY reconciliations
+ALTER TABLE ONLY bank_reconciliations
     ADD CONSTRAINT reconciliations_bank_transaction_id_key UNIQUE (bank_transaction_id);
-
-
---
--- Name: reconciliations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY reconciliations
-    ADD CONSTRAINT reconciliations_pkey PRIMARY KEY (id);
 
 
 --
 -- Name: reconciliations_transaction_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY reconciliations
+ALTER TABLE ONLY bank_reconciliations
     ADD CONSTRAINT reconciliations_transaction_id_key UNIQUE (transaction_id);
 
 
@@ -878,7 +878,7 @@ ALTER TABLE ONLY first_associates_transactions
 -- Name: reconciliations_admin_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY reconciliations
+ALTER TABLE ONLY bank_reconciliations
     ADD CONSTRAINT reconciliations_admin_id_fkey FOREIGN KEY (admin_id) REFERENCES admins(id);
 
 
@@ -886,7 +886,7 @@ ALTER TABLE ONLY reconciliations
 -- Name: reconciliations_bank_transaction_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY reconciliations
+ALTER TABLE ONLY bank_reconciliations
     ADD CONSTRAINT reconciliations_bank_transaction_id_fkey FOREIGN KEY (bank_transaction_id) REFERENCES bank_transactions(id);
 
 
@@ -894,7 +894,7 @@ ALTER TABLE ONLY reconciliations
 -- Name: reconciliations_transaction_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY reconciliations
+ALTER TABLE ONLY bank_reconciliations
     ADD CONSTRAINT reconciliations_transaction_id_fkey FOREIGN KEY (transaction_id) REFERENCES transactions(id);
 
 
@@ -967,4 +967,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150110152230');
 INSERT INTO schema_migrations (version) VALUES ('20150212203420');
 
 INSERT INTO schema_migrations (version) VALUES ('20150212225137');
+
+INSERT INTO schema_migrations (version) VALUES ('20150213060343');
 

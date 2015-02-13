@@ -10,4 +10,3 @@ RSpec.describe "LendLayer internal accounts" do
     end
   end
 end
-
