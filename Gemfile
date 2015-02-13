@@ -48,6 +48,9 @@ gem 'rack-cors', require: 'rack/cors'
 # JWT auth
 gem 'jwt'
 
+# read First Associates shizzle
+gem 'simple_xlsx_reader'
+
 group :development do
   gem 'guard-rspec', require: false
   gem 'terminal-notifier-guard', '~> 1.6.1'

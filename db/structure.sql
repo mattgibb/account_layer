@@ -387,7 +387,7 @@ ALTER SEQUENCE customers_id_seq OWNED BY account_groups.id;
 CREATE TABLE first_associates_reports (
     id bigint NOT NULL,
     admin_id bigint NOT NULL,
-    contents text NOT NULL,
+    contents bytea NOT NULL,
     created_at audit_timestamp,
     updated_at audit_timestamp
 );
@@ -419,9 +419,9 @@ ALTER SEQUENCE first_associates_reports_id_seq OWNED BY first_associates_reports
 CREATE TABLE first_associates_transactions (
     id bigint NOT NULL,
     first_associates_report_id bigint NOT NULL,
-    transaction_date timestamp without time zone,
-    effective_date timestamp without time zone,
-    g_l_date timestamp without time zone,
+    transaction_date date,
+    effective_date date,
+    g_l_date date,
     loan_number integer,
     short_name text,
     payment_method text,
@@ -725,14 +725,6 @@ ALTER TABLE ONLY customer_profiles
 
 ALTER TABLE ONLY account_groups
     ADD CONSTRAINT customers_pkey PRIMARY KEY (id);
-
-
---
--- Name: first_associates_reports_contents_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY first_associates_reports
-    ADD CONSTRAINT first_associates_reports_contents_key UNIQUE (contents);
 
 
 --

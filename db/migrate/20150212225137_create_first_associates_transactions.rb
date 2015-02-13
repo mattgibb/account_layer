@@ -4,9 +4,9 @@ class CreateFirstAssociatesTransactions < ActiveRecord::Migration
       CREATE TABLE first_associates_transactions (
         id bigserial PRIMARY KEY,
         first_associates_report_id bigint REFERENCES first_associates_reports NOT NULL,
-        transaction_date timestamp without time zone,
-        effective_date timestamp without time zone,
-        g_l_date timestamp without time zone,
+        transaction_date date,
+        effective_date date,
+        g_l_date date,
         loan_number integer,
         short_name text,
         payment_method text,

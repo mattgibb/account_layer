@@ -1,7 +1,7 @@
 class BankStatementLoader
-  def initialize(admin, statement)
+  def initialize(admin, document)
     @admin = admin
-    @statement = statement.respond_to?(:read) ? statement.read : statement
+    @document = document.respond_to?(:read) ? document.read : document
   end
 
   def load
@@ -15,14 +15,14 @@ class BankStatementLoader
   end
 
   private
-    
+
     def statement_already_loaded?
-      BankStatement.where(contents: @statement).exists?
+      BankStatement.where(contents: @document).exists?
     end
 
     def save_statement
-      @statement = BankStatement.create admin_id: @admin.id, 
-                                        contents: @statement,
+      @statement = BankStatement.create admin_id: @admin.id,
+                                        contents: @document,
                                         account_number: account.number
     end
 
@@ -38,6 +38,6 @@ class BankStatementLoader
     end
 
     def account
-      @account ||= QuickenParser.parse(@statement).first
+      @account ||= QuickenParser.parse(@document).first
     end
 end
