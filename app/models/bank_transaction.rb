@@ -14,13 +14,13 @@ class BankTransaction < ActiveRecord::Base
   end
 
   private
-  
+
     def create_transaction(other_account_id)
       credit_id = incoming? ? other_account_id : wells_fargo_id
       debit_id  = incoming? ? wells_fargo_id : other_account_id
 
       Transaction.create credit_id: credit_id,
-                         debit_id: debit_id, 
+                         debit_id: debit_id,
                          amount: amount.abs,
                          paid_at: Time.now
     end
