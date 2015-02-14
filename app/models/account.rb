@@ -6,5 +6,9 @@ class Account < ActiveRecord::Base
     def wells_fargo_cash
       LendlayerAccount::WellsFargoCash.first
     end
+
+    def first_associates_receivables
+      LendlayerAccount::FirstAssociatesReceivables.first
+    end
   end
 end

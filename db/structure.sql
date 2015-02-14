@@ -414,6 +414,39 @@ ALTER SEQUENCE customers_id_seq OWNED BY account_groups.id;
 
 
 --
+-- Name: first_associates_reconciliations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE first_associates_reconciliations (
+    id bigint NOT NULL,
+    transaction_id bigint NOT NULL,
+    first_associates_transaction_id bigint NOT NULL,
+    admin_id bigint NOT NULL,
+    created_at audit_timestamp,
+    updated_at audit_timestamp
+);
+
+
+--
+-- Name: first_associates_reconciliations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE first_associates_reconciliations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: first_associates_reconciliations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE first_associates_reconciliations_id_seq OWNED BY first_associates_reconciliations.id;
+
+
+--
 -- Name: first_associates_reports; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -598,6 +631,13 @@ ALTER TABLE ONLY customer_profiles ALTER COLUMN id SET DEFAULT nextval('customer
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY first_associates_reconciliations ALTER COLUMN id SET DEFAULT nextval('first_associates_reconciliations_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY first_associates_reports ALTER COLUMN id SET DEFAULT nextval('first_associates_reports_id_seq'::regclass);
 
 
@@ -736,6 +776,30 @@ ALTER TABLE ONLY account_groups
 
 
 --
+-- Name: first_associates_reconciliati_first_associates_transaction__key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY first_associates_reconciliations
+    ADD CONSTRAINT first_associates_reconciliati_first_associates_transaction__key UNIQUE (first_associates_transaction_id);
+
+
+--
+-- Name: first_associates_reconciliations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY first_associates_reconciliations
+    ADD CONSTRAINT first_associates_reconciliations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: first_associates_reconciliations_transaction_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY first_associates_reconciliations
+    ADD CONSTRAINT first_associates_reconciliations_transaction_id_key UNIQUE (transaction_id);
+
+
+--
 -- Name: first_associates_reports_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -859,6 +923,30 @@ ALTER TABLE ONLY customer_profiles
 
 
 --
+-- Name: first_associates_reconciliati_first_associates_transaction_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY first_associates_reconciliations
+    ADD CONSTRAINT first_associates_reconciliati_first_associates_transaction_fkey FOREIGN KEY (first_associates_transaction_id) REFERENCES first_associates_transactions(id);
+
+
+--
+-- Name: first_associates_reconciliations_admin_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY first_associates_reconciliations
+    ADD CONSTRAINT first_associates_reconciliations_admin_id_fkey FOREIGN KEY (admin_id) REFERENCES admins(id);
+
+
+--
+-- Name: first_associates_reconciliations_transaction_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY first_associates_reconciliations
+    ADD CONSTRAINT first_associates_reconciliations_transaction_id_fkey FOREIGN KEY (transaction_id) REFERENCES transactions(id);
+
+
+--
 -- Name: first_associates_reports_admin_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -969,4 +1057,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150212203420');
 INSERT INTO schema_migrations (version) VALUES ('20150212225137');
 
 INSERT INTO schema_migrations (version) VALUES ('20150213060343');
+
+INSERT INTO schema_migrations (version) VALUES ('20150213063741');
 

@@ -32,5 +32,9 @@ RSpec.describe Account do
     describe ".wells_fargo_cash" do
       specify { expect(Account.wells_fargo_cash).to eq Account::LendlayerAccount::WellsFargoCash.first }
     end
+
+    describe ".first_associates_receivables" do
+      specify { expect(Account.first_associates_receivables).to eq Account::LendlayerAccount::FirstAssociatesReceivables.first }
+    end
   end
 end

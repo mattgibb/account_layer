@@ -5,13 +5,14 @@ RSpec.describe BankTransaction do
     subject { create :bank_transaction, amount: amount }
 
     let(:current_admin) { create :admin }
+    let(:wells_fargo_account) { Account.wells_fargo_cash }
 
     def do_reconcile
       subject.reconcile! other_account_id, current_admin
     end
 
     context "a deposit" do
-      let(:other_account_id) { create(:lender).cash_account.id }
+      let(:other_account_id) { create(:lender_with_accounts).cash_account.id }
       let(:amount) { 123 }
 
       before { do_reconcile }
@@ -24,7 +25,7 @@ RSpec.describe BankTransaction do
     end
 
     context "a withdrawal" do
-      let(:other_account_id) { create(:borrower).loan_account.id }
+      let(:other_account_id) { create(:borrower_with_accounts).loan_account.id }
       let(:amount) { -123 }
 
       before do
@@ -56,7 +57,7 @@ RSpec.describe BankTransaction do
     subject { create :bank_transaction }
 
     let(:bank_reconciliation) do
-      account = create(:lender).cash_account
+      account = create(:lender_with_accounts).cash_account
       transaction = create :lendlayer_transaction, credit_account: account
       build :bank_reconciliation,
             transaction_id: transaction.id,
@@ -72,7 +73,7 @@ RSpec.describe BankTransaction do
     end
 
     it "is true with a persisted reconciliation" do
-      subject.bank_reconciliation = bank_reconciliation
+      subject.reconciliation = bank_reconciliation
       subject.save
       expect(subject).to be_reconciled
     end

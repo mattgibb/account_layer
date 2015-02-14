@@ -5,7 +5,7 @@ RSpec.describe AccountGroup::Lender do
 
   describe "profiles" do
     def create_customer_profile
-      subject.create_profile attributes_for :customer_profile 
+      subject.create_profile attributes_for :customer_profile
     end
 
     def create_cohort_profile

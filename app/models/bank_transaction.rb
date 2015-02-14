@@ -1,15 +1,15 @@
 class BankTransaction < ActiveRecord::Base
   belongs_to :bank_statement
-  has_one :bank_reconciliation
+  has_one :reconciliation, class: BankReconciliation
 
   def reconciled?
-    !!bank_reconciliation && bank_reconciliation.persisted?
+    !!reconciliation && reconciliation.persisted?
   end
 
   def reconcile!(other_account_id, current_admin)
     transaction do # database transaction, not financial transaction
-      create_bank_reconciliation transaction_id: create_transaction(other_account_id).id,
-                                 admin_id: current_admin.id
+      create_reconciliation transaction_id: create_transaction(other_account_id).id,
+                            admin_id: current_admin.id
     end
   end
 
