@@ -13,8 +13,8 @@
 == Optional install environment
   # allows you to use 'rake' instead of 'bundle exec rake' or 'bin/rake'
   brew install direnv
-  direnv allow
   echo "PATH_add bin" > .envrc
+  direnv allow
   
   # Makes tests, dev server, rake tasks super fast
   bundle exec spring binstub --all
