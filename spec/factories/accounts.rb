@@ -8,6 +8,10 @@ FactoryGirl.define do
       factory :lender_cash_account do
         account_group factory: :lender
       end
+
+      factory :borrower_cash_account do
+        account_group factory: :borrower
+      end
     end
 
     factory :loan_account, class: Account::CustomerAccount::LoanAccount do
