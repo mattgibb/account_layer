@@ -6,8 +6,9 @@ FactoryGirl.define do
 
     factory :lendlayer_transaction do
       association :credit_account, factory: :lender_cash_account
-      cash_account = Account::LendlayerAccount::WellsFargoCash.first
-      debit_id cash_account && cash_account.id
+      # debit_id in block so that rake db:setup doesn't access the db
+      # before it's created when FactoryGirl loads
+      debit_id { Account.wells_fargo_cash.id } 
     end
   end
 end
