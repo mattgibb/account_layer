@@ -1,19 +1,16 @@
 Rails.application.routes.draw do
-  resources :accounts,
-            only: [:index, :show],
-            constraints: {format: :json}
+  constraints format: :json do
+    resources :accounts, only: [:index, :show]
 
-  resources :transactions,
-            only: [:index, :show, :create],
-            constraints: {format: :json}
+    resources :transactions, only: [:index, :show, :create]
 
-  resources :bank_statements, only: :create
+    resources :bank_statements, only: :create
 
-  resources :bank_transactions,
-            only: [:index, :show],
-            constraints: {format: :json} do
-    member do
-      post 'reconciliation'
+    resources :bank_transactions, :first_associates_transactions,
+              only: [:index, :show] do
+      member do
+        post 'reconciliation'
+      end
     end
   end
 
