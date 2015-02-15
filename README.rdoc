@@ -1,4 +1,5 @@
 = README
+{<img alt="Status?branch=master" src="https://codeship.com/projects/063f6aa0-96a8-0132-c4a2-7a1406c9da98/status?branch=master" />}[https://codeship.com/projects/63072]
 
 == Install Ruby
   brew update
