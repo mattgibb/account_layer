@@ -20,8 +20,8 @@ RUN apt-get install -y --force-yes \
 # Install rbenv and ruby-build
 RUN git clone https://github.com/sstephenson/rbenv.git /root/.rbenv
 RUN git clone https://github.com/sstephenson/ruby-build.git /root/.rbenv/plugins/ruby-build
-RUN git clone https://github.com/aripollak/rbenv-bundler-ruby-version.git ~/.rbenv/plugins/rbenv-bundler-ruby-version
-RUN ./root/.rbenv/plugins/ruby-build/install.sh
+RUN git clone https://github.com/aripollak/rbenv-bundler-ruby-version.git /root/.rbenv/plugins/rbenv-bundler-ruby-version
+RUN /root/.rbenv/plugins/ruby-build/install.sh
 ENV PATH /root/.rbenv/bin:$PATH
 ENV PATH /root/.rbenv/shims:$PATH
 RUN echo 'eval "$(rbenv init -)"' >> /etc/profile.d/rbenv.sh # or /etc/profile
