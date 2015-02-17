@@ -12,6 +12,9 @@ RUN apt-get install -y --force-yes \
   libxml2-dev \
   libxslt-dev \
   libyaml-dev \
+  postgresql \
+  postgresql-contrib \
+  postgresql-server-dev-9.3 \
   zlib1g-dev
 
 # Install rbenv and ruby-build
@@ -41,8 +44,8 @@ RUN gem install bundler
 
 COPY Gemfile Gemfile.lock /app/
 RUN cd /app && rbenv local 2.1.5 && bundle
-# COPY . /app
-#
-# WORKDIR /app
-# EXPOSE 8080
-# CMD ["unicorn_rails"]
+COPY . /app
+
+WORKDIR /app
+EXPOSE 8080
+CMD ["unicorn_rails"]
