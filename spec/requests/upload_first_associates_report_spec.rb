@@ -1,13 +1,13 @@
 require "rails_helper"
 
-RSpec.describe "Uploading bank statements" do
-  let(:upload_path) { '/bank_statements' }
+RSpec.describe "Uploading First Associates reports" do
+  let(:upload_path) { '/first_associates_reports' }
 
   def do_post
-    path = Rails.root.join 'spec/fixtures/wells_fargo_statements/Checking2.qfx'
-    qfx_file = Rack::Test::UploadedFile.new path, 'application/vnd.intu.qfx'
-    statement_params = {file: qfx_file}
-    post upload_path, statement_params, extra_headers
+    path = Rails.root.join 'spec/fixtures/Sample Loan Report Pack.xlsx'
+    xlsx_file = Rack::Test::UploadedFile.new path, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    report_params = {file: xlsx_file}
+    post upload_path, report_params, extra_headers
   end
 
   context "without logging in" do
@@ -22,7 +22,7 @@ RSpec.describe "Uploading bank statements" do
     before { do_post }
 
     it "creates the resource" do
-      expect(BankStatement.count).to eq 1
+      expect(FirstAssociatesReport.count).to eq 1
     end
 
     it "says it's been created" do
@@ -36,7 +36,7 @@ RSpec.describe "Uploading bank statements" do
       end
 
       it "doesn't create another resource" do
-        expect{do_post}.not_to change{BankStatement.count}
+        expect{do_post}.not_to change{FirstAssociatesReport.count}
       end
     end
 

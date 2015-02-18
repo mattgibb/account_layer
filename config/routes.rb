@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
     resources :transactions, only: [:index, :show, :create]
 
-    resources :bank_statements, only: :create
+    resources :bank_statements, :first_associates_reports, only: :create
 
     resources :bank_transactions, :first_associates_transactions,
               only: [:index, :show] do

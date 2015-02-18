@@ -21,7 +21,7 @@ class FirstAssociatesReportLoader
 
   def initialize(admin, document)
     @admin = admin
-    @document = document.respond_to?(:read) ? document.read : document
+    @document = document.respond_to?(:read) ? document.read.b : document.b
   end
 
   def load
@@ -37,12 +37,12 @@ class FirstAssociatesReportLoader
   private
 
     def report_already_loaded?
-      FirstAssociatesReport.where(contents: @document.b).exists?
+      FirstAssociatesReport.where(contents: @document).exists?
     end
 
     def save_report
       @report = FirstAssociatesReport.create admin_id: @admin.id,
-                                             contents: @document.b
+                                             contents: @document
     end
 
     def save_transactions
@@ -86,7 +86,7 @@ class FirstAssociatesReportLoader
 
     # simple_xlsx_reader only works with files, not streams
     def tempfile
-      @tempfile ||= Tempfile.new('report.xlsx').tap do |xlsx|
+      @tempfile ||= Tempfile.new('report.xlsx', encoding: 'ascii-8bit').tap do |xlsx|
         xlsx.write @document
       end
     end
