@@ -2,7 +2,7 @@ class FirstAssociatesTransactionsController < ApplicationController
   before_action :set_first_associates_transaction, only: [:show, :reconciliation]
 
   def index
-    @bank_transactions = FirstAssociatesTransaction.all
+    @first_associates_transactions = FirstAssociatesTransaction.all
   end
 
   def show
