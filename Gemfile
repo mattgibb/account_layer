@@ -15,9 +15,6 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-# Use Unicorn as the app server
-gem 'unicorn'
-
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 gem "omniauth-oauth2"
@@ -53,4 +50,9 @@ group :development, :test do
 
   # factories instead of fixtures
   gem 'factory_girl_rails'
+end
+
+group :production do
+  # Use Unicorn as the app server
+  gem 'unicorn'
 end
