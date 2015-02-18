@@ -55,14 +55,14 @@ class FirstAssociatesReportLoader
           short_name: txn[4],
           payment_method: txn[5],
           payment_method_reference: txn[6],
-          principal: txn[7],
-          interest: txn[8],
-          fees: txn[9],
-          late_charges: txn[10],
-          udbs: txn[11],
-          suspense: txn[12],
-          impound: txn[13],
-          payment_amount: txn[14]
+          principal: txn[7].to_d,
+          interest: txn[8].to_d,
+          fees: txn[9].to_d,
+          late_charges: txn[10].to_d,
+          udbs: txn[11].to_d,
+          suspense: txn[12].to_d,
+          impound: txn[13].to_d,
+          payment_amount: txn[14].to_d
         )
       end
     end
@@ -93,5 +93,9 @@ class FirstAssociatesReportLoader
 
     def parse_date(str)
       Time.strptime(str, "%m/%d/%Y")
+    end
+
+    def format_money(amount)
+      amount.to_d
     end
 end

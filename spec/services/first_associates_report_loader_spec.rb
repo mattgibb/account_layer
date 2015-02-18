@@ -28,17 +28,16 @@ describe FirstAssociatesReportLoader do
           loan_number: 50,
           short_name: "An FA Transaction",
           payment_method: 'ACH',
-          payment_method_reference: "123.0"
-        ).where("
-          round(principal,      4)=123.45 AND
-          round(interest,       4)=12.34 AND
-          round(fees,           4)=1.23 AND
-          round(late_charges,   4)=0.12 AND
-          round(udbs,           4)=3.21 AND
-          round(suspense,       4)=43.21 AND
-          round(impound,        4)=543.21 AND
-          round(payment_amount, 4)=6543.21
-        ").count
+          payment_method_reference: "123.0",
+          principal: 123.45,
+          interest: 12.34,
+          fees: 1.23,
+          late_charges: 0.12,
+          udbs: 3.21,
+          suspense: 43.21,
+          impound: 543.21,
+          payment_amount: 6543.21
+        ).count
       }.by 1
     end
 
