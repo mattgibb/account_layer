@@ -7,9 +7,18 @@ class BankTransaction < ActiveRecord::Base
   end
 
   def reconcile!(other_account_id, current_admin)
-    transaction do # database transaction, not financial transaction
+    !!transaction do # database transaction, not financial transaction
       create_reconciliation transaction_id: create_transaction(other_account_id).id,
                             admin_id: current_admin.id
+    end
+  end
+
+  def reconcile(*args)
+    begin
+      reconcile! *args
+    rescue ActiveRecord::StatementInvalid => e
+      raise unless PG::CheckViolation === e.cause
+      false
     end
   end
 

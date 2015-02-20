@@ -10,8 +10,11 @@ class BankTransactionsController < ApplicationController
 
   def reconciliation
     if account_exists?
-      @bank_transaction.reconcile! params[:account_id], current_admin
-      render json: {message: "Account is reconciled"}, status: 201
+      if @bank_transaction.reconcile params[:account_id], current_admin
+        render json: {message: "Account is reconciled"}, status: 201
+      else
+        render json: {error: "There are insufficient funds to reconcile this transaction"}, status: 422
+      end
     else
       render json: {error: "The account does not exist"}, status: 404
     end
@@ -27,4 +30,3 @@ class BankTransactionsController < ApplicationController
       Account.where(id: params[:account_id]).exists?
     end
 end
-
