@@ -1,8 +1,10 @@
-json.attributes Account.column_names
+columns = AccountPresenter.column_names
+json.attributes columns
 
 json.models do
   json.array!(@accounts) do |account|
-    json.extract! account, :id, :balance, :type, :credit_or_debit, :created_at, :updated_at
-    json.url account_url(account, format: :json)
+    presenter = AccountPresenter.new account, self
+    json.extract! presenter, *columns
+    json.url account_url(presenter, format: :json)
   end
 end

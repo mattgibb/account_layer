@@ -52,6 +52,10 @@ group :development, :test do
   gem 'factory_girl_rails'
 end
 
+group :test do
+  gem 'rspec-its'
+end
+
 group :production do
   # Use Unicorn as the app server
   gem 'unicorn'

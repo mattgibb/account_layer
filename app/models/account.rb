@@ -4,11 +4,11 @@ class Account < ActiveRecord::Base
 
   class << self
     def wells_fargo_cash
-      LendlayerAccount::WellsFargoCash.first
+      self::LendlayerAccount::WellsFargoCash.first
     end
 
     def first_associates_receivables
-      LendlayerAccount::FirstAssociatesReceivables.first
+      self::LendlayerAccount::FirstAssociatesReceivables.first
     end
   end
 end

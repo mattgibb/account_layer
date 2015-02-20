@@ -3,5 +3,4 @@ class CustomerProfile < ActiveRecord::Base
              polymorphic: true,
              foreign_key: :account_group_id,
              foreign_type: :account_group_type
-
 end
