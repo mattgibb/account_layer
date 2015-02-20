@@ -43,6 +43,7 @@ module AccountLayer
       g.helper false
       g.controller_specs false
       g.view_specs false
+      g.routing_specs false
     end
   end
 end
