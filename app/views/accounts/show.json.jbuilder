@@ -1,1 +1,9 @@
-json.extract! @account, :id, :balance, :type, :credit_or_debit, :created_at, :updated_at
+presenter = AccountPresenter.new @account, self
+
+json.extract! presenter,
+  :id,
+  :balance,
+  :type,
+  :customer_type,
+  :customer_name,
+  :credit_or_debit
