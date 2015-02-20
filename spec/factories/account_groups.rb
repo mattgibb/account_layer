@@ -15,7 +15,7 @@ FactoryGirl.define do
       end
     end
 
-    factory :school do
+    factory :school, class: AccountGroup::School do
     end
 
     factory :cohort do
