@@ -10,10 +10,6 @@ class API::BaseController < ActionController::Base
     end
 
     def authenticate
-      authenticate_token || render_unauthorized
-    end
-
-    def authenticate_token
       authenticate_or_request_with_http_token do |token, options|
         ENV["API_TOKEN"] == token
       end
