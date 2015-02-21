@@ -29,7 +29,6 @@ describe AccountGroup::School do
 
   describe '.create_with_profile_and_accounts' do
     let(:params) { {name: 'NYCDA', lendlayer_id: 123} }
-    let(:profile) { CustomerProfile.where }
     subject { described_class.create_with_profile_and_accounts params }
 
     it "creates a school, a profile and cash account" do
@@ -44,17 +43,12 @@ describe AccountGroup::School do
     context 'with invalid params' do
       let(:params) { {} }
 
-      def try_to_create_school
-        begin
-          subject
-        rescue ActiveRecord::StatementInvalid
-        end
-      end
+      it { is_expected.to be_nil }
 
       it "doesn't create anything" do
-        expect{try_to_create_school}.not_to change {described_class.count}
-        expect{try_to_create_school}.not_to change {CustomerProfile.count}
-        expect{try_to_create_school}.not_to change {Account.count}
+        expect{subject}.not_to change {described_class.count}
+        expect{subject}.not_to change {CustomerProfile.count}
+        expect{subject}.not_to change {Account.count}
       end
     end
   end

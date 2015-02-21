@@ -6,12 +6,15 @@ class AccountGroup::School < AccountGroup
           foreign_key: :account_group_id,
           foreign_type: :account_group_type
 
-  def self.create_with_profile_and_accounts(params)
-    transaction do
-      create.tap do |school|
-        school.create_cash_account
-        school.create_profile params
+  def self.create_with_profile_and_accounts(profile_params)
+    begin
+      transaction do
+        create.tap do |school|
+          school.create_cash_account!
+          school.create_profile! profile_params
+        end
       end
+    rescue ActiveRecord::RecordInvalid
     end
   end
 end
