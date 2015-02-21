@@ -776,14 +776,6 @@ ALTER TABLE ONLY account_groups
 
 
 --
--- Name: first_associates_reconciliati_first_associates_transaction__key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY first_associates_reconciliations
-    ADD CONSTRAINT first_associates_reconciliati_first_associates_transaction__key UNIQUE (first_associates_transaction_id);
-
-
---
 -- Name: first_associates_reconciliations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -813,14 +805,6 @@ ALTER TABLE ONLY first_associates_reports
 
 ALTER TABLE ONLY first_associates_transactions
     ADD CONSTRAINT first_associates_transactions_pkey PRIMARY KEY (id);
-
-
---
--- Name: reconciliations_bank_transaction_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY bank_reconciliations
-    ADD CONSTRAINT reconciliations_bank_transaction_id_key UNIQUE (bank_transaction_id);
 
 
 --
@@ -1059,4 +1043,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150212225137');
 INSERT INTO schema_migrations (version) VALUES ('20150213060343');
 
 INSERT INTO schema_migrations (version) VALUES ('20150213063741');
+
+INSERT INTO schema_migrations (version) VALUES ('20150221172835');
 
