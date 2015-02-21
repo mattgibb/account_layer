@@ -14,7 +14,7 @@ Rails.application.routes.draw do
     end
 
     namespace :api do
-      resources :schools, only: :create
+      resources :schools, :lenders, :borrowers, only: :create
     end
   end
 
