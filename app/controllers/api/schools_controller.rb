@@ -27,7 +27,7 @@ module API
         elsif @school = AccountGroup::School.create_with_profile_and_accounts(school_params)
           format.json { head 204, location: "#{api_schools_url}/#{@school.id}" }
         else
-          format.json { head status: :unprocessable_entity }
+          format.json { render json: {error: "both school[name] and school[lendlayer_id] are required"}, status: 422 }
         end
       end
     end
