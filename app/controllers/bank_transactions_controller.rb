@@ -2,7 +2,7 @@ class BankTransactionsController < ApplicationController
   before_action :set_bank_transaction, only: [:show, :reconciliation]
 
   def index
-    @bank_transactions = BankTransaction.includes(:bank_statement).all
+    @bank_transactions = BankTransaction.includes(:bank_statement, :reconciliation).all
   end
 
   def show
