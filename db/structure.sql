@@ -543,12 +543,10 @@ CREATE TABLE transactions (
     debit_id bigint NOT NULL,
     amount positive_currency,
     comment text,
-    due_at timestamp with time zone,
-    paid_at timestamp with time zone,
+    paid_at timestamp with time zone NOT NULL,
     created_at audit_timestamp,
     updated_at audit_timestamp,
-    CONSTRAINT dont_pay_yourself CHECK ((debit_id <> credit_id)),
-    CONSTRAINT either_due_or_paid CHECK (((due_at IS NOT NULL) OR (paid_at IS NOT NULL)))
+    CONSTRAINT dont_pay_yourself CHECK ((debit_id <> credit_id))
 );
 
 
@@ -1045,4 +1043,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150213060343');
 INSERT INTO schema_migrations (version) VALUES ('20150213063741');
 
 INSERT INTO schema_migrations (version) VALUES ('20150221172835');
+
+INSERT INTO schema_migrations (version) VALUES ('20150222013010');
 

@@ -18,8 +18,7 @@ RSpec.shared_examples "it is reconcilable" do |resource|
       it "creates a transaction from a lender's account to our account" do
         query = Transaction.where(credit_id: other_account_id,
                                   debit_id: our_account_id,
-                                  amount: amount,
-                                  due_at: nil)
+                                  amount: amount)
                            .where.not(paid_at: nil)
         expect(query).to exist
       end

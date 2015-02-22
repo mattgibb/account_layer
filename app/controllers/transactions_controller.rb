@@ -34,6 +34,6 @@ class TransactionsController < ApplicationController
     end
 
     def transaction_params
-      params[:transaction].permit :amount, :due_at, :paid_at, :credit_id, :debit_id, :comment
+      params[:transaction].permit :amount, :paid_at, :credit_id, :debit_id, :comment
     end
 end
